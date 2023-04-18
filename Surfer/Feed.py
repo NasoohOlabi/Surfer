@@ -8,7 +8,3 @@ class Feed(ABC):
     @abstractmethod
     def __iter__(self) -> Iterator[Any]:
         pass
-
-    @abstractmethod
-    def __next__(self) -> Any:
-        pass

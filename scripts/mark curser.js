@@ -1,0 +1,1 @@
+curser.classList.add('#1')

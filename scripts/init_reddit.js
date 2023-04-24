@@ -1,5 +1,9 @@
 /* window.curser = [].slice.call(document.querySelectorAll(`div[data-scroller-first]`));
 curser = curser.filter(x => x.querySelector('i.icon-upvote'))[0] || curser[0]; */
+/*document.addEventListener("click", function (event) {
+	console.log("Clicked at position: (" + event.clientX + ", " + event.clientY + ")");
+});*/
+
 window.curser = null;
 
 const intervalId = setInterval(() => {

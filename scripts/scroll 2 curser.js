@@ -22,6 +22,3 @@ function slowScroll(third, fifth, speed_factor) {
 }
 
 slowScroll(+'#0', +'#1', +'#2');
-
-
-curser = curser.nextSibling;

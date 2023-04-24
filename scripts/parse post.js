@@ -3,22 +3,22 @@ function selectPostTitle(post) {
 };
 function parsePost(post) {
 	let tmp = post.querySelector('.icon-upvote');
-	while (tmp.innerText.length === 0) {
+	while (tmp && tmp.innerText.length === 0) {
 		tmp = tmp.parentElement;
 	}
-	const up_votes = tmp.innerText;
+	const up_votes = tmp?.innerText;
 	/**
 	 * @type {string[]} data
 	 */
 	const texts = Array
 		.from(post.querySelectorAll('*'))
 		.filter(x => x.getAttribute('href'))
-		.map(x => x.innerText);
+		.map(x => x?.innerText);
 	let data = texts;
 	const links = Array
 		.from(post.querySelectorAll('*'))
 		.filter(x => x.getAttribute('href'))
-		.map(x => x.getAttribute('href'));
+		.map(x => x.href);
 	const sub_reddit = data.filter(x => x.startsWith('r/'))[0];
 	const user = data.filter(x => x.startsWith('u/'))[0];
 	const comments = data.reverse().filter(x => x.toLowerCase().includes('comments'))[0];

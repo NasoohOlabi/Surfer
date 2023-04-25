@@ -33,4 +33,4 @@ function parsePost(post) {
 	return obj
 };
 
-return parsePost(window.curser)
+return parsePost(window.cursor)

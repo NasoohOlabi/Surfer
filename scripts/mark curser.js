@@ -1,1 +1,0 @@
-curser.classList.add('#0')

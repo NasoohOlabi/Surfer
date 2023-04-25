@@ -1,6 +1,6 @@
 function slowScroll(third, fifth, speed_factor) {
 	window.scrolling = true;
-	let elementToScroll = window.curser;
+	let elementToScroll = window.cursor;
 	const thresholded = (x) => (x > 0) ? Math.max(x, 10) : Math.min(x, -10);
 	let viewHeight = window.innerHeight;
 

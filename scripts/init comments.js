@@ -1,1 +1,1 @@
-window.cursor = 
+window.cursor = document.querySelector('shreddit-comment')

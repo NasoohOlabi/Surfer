@@ -1,0 +1,1 @@
+window.cursor = document.querySelector('shreddit-comment');

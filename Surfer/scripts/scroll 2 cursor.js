@@ -26,4 +26,4 @@ function slowScroll(third, fifth, speed_factor) {
 	scroll();
 }
 
-slowScroll(+'#0', +'#1', +'#2');
+slowScroll(+'$0', +'$1', +'$2');

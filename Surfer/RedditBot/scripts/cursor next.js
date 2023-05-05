@@ -1,4 +1,4 @@
 cursor = cursor.nextSibling;
-while (cursor.querySelector('.scrollerItem.Blank')) {
+while ($0) {
 	cursor = cursor.nextSibling;
 }

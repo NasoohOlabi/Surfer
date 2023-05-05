@@ -1,0 +1,1 @@
+cursor.classList.add('$0')

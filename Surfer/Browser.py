@@ -38,10 +38,8 @@ def GetBrowser(browser=None, time_out=600):
         chrome_options.add_argument("start-maximized")
         chrome_options.add_argument("--user-data-dir=./User_Data")
     if not browser:
-        browser = webdriver.Chrome(
-            ChromeDriverManager().install(),
-            options=chrome_options,
-        )
+        ChromeDriverManager().install()
+        browser = webdriver.Chrome(chrome_options)
 
         handles = browser.window_handles
         for _, handle in enumerate(handles):

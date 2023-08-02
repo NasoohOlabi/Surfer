@@ -1,3 +1,3 @@
-console.log(`cursor !== null : `);
-console.log(cursor !== null);
-return cursor !== null
+console.log(`window.cursor !== null : `);
+console.log(window.cursor !== null);
+return window.cursor !== null

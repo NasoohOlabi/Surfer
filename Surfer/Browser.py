@@ -31,14 +31,13 @@ class invisibility_of(object):
 def GetBrowser(browser=None, time_out=600):
     chrome_options = Options()
     if sys.platform == "win32":
+        chrome_options.add_argument("--user-data-dir=C:\\Users\\nasoo\\AppData\\Local\\Google\\Chrome\\User Data")
         chrome_options.add_argument("--profile-directory=Default")
-        chrome_options.add_argument("--user-data-dir=C:/Temp/ChromeProfile")
         chrome_options.add_argument("--disable-gpu")
     else:
         chrome_options.add_argument("start-maximized")
         chrome_options.add_argument("--user-data-dir=./User_Data")
     if not browser:
-        ChromeDriverManager().install()
         browser = webdriver.Chrome(chrome_options)
 
         handles = browser.window_handles

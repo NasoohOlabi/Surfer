@@ -12,7 +12,7 @@ class Feed(ABC):
         self.handle = handle
         self.driver = driver
         self.handle = driver.current_window_handle if handle is None else handle
-        self.run_feed_script = ScriptRunner(driver,'./Surfer/scripts/')
+        self.run_script = ScriptRunner(driver,'./Surfer/scripts/')
 
     def focus(self):
         if self.handle is not None:

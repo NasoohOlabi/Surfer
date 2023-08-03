@@ -1,0 +1,1 @@
+document.querySelector('textarea').classList.add('$0')

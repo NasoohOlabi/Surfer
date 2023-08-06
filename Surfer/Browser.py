@@ -6,6 +6,7 @@ import sys
 import time
 from typing import Callable
 
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.common.exceptions import (NoSuchElementException,
                                         TimeoutException,
@@ -27,12 +28,15 @@ class invisibility_of(object):
     def __call__(self, ignored):
         return not _element_if_visible(self.element)
 
+load_dotenv()
 
 def GetBrowser(browser=None, time_out=600):
     chrome_options = Options()
     if sys.platform == "win32":
-        chrome_options.add_argument("--user-data-dir=C:\\Users\\nasoo\\AppData\\Local\\Google\\Chrome\\User Data")
-        chrome_options.add_argument("--profile-directory=Default")
+        udd = os.getenv('user-data-dir')
+        if udd is not None:
+            chrome_options.add_argument("--user-data-dir="+udd)
+            chrome_options.add_argument("--profile-directory=Default")
         chrome_options.add_argument("--disable-gpu")
     else:
         chrome_options.add_argument("start-maximized")
@@ -47,3 +51,7 @@ def GetBrowser(browser=None, time_out=600):
                 browser.close()
 
     return browser
+
+browser = None
+if __name__ == '__main__':
+    browser = GetBrowser()

@@ -43,6 +43,7 @@ def GetBrowser(browser=None, time_out=600):
         chrome_options.add_argument("--user-data-dir=./User_Data")
     if not browser:
         browser = webdriver.Chrome(chrome_options)
+
     return browser
 
 browser = None

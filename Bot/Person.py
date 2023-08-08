@@ -24,7 +24,7 @@ class Person:
             description += f"{self.gender} "
 
         if self.city:
-            description += f"who lives in {self.city} "
+            description += f"who lives in {self.city}"
         filler = ["and","Who's"]
         favorites_str = ''
         if len(self.favorites) > 0:
@@ -63,4 +63,9 @@ class Person:
         return 'he'
       else:
         return 'she'
+    def his(self):
+      if self.gender == 'boy' or self.gender == 'male':
+        return 'his'
+      else:
+        return 'her'
             

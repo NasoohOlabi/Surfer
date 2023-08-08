@@ -3,6 +3,8 @@ from typing import List
 
 from Bot import Message, Person
 
+TEXT_MESSAGE_SIZE = 15
+FORMAT = f"""(use around {TEXT_MESSAGE_SIZE} words don't use emoticons)"""
 
 def setup(alice:Person,bob:Person):
 	return f"{alice.get_description()} and {bob.get_description()}. and they have been friends for a long time"
@@ -12,18 +14,18 @@ def chat_prompt(messages: List[Message]):
 	return f"Can you please continue this chat(keep chat going and interesting ask many questions)\n```{chat_str}```"
 
 def start_conversation_with_post(alice:Person,bob:Person,post):
-	return f"{setup(alice,bob)}. if you are {alice.first_name} and you want to tell {bob.first_name} about this post `{post}` and your take on the topic in less that 20 words what would you send to {bob.him()} in chat (don't use emoticons)?"
+	return f"start conversation {FORMAT} about this post `{post}`"
 
 
 def startChatReplyPrompt(message: Message):
-	return f'''bob sent me this message please write a reply with about 15 words with no emoticons
+	return f'''my friend sent me this message please write a reply {FORMAT}
 
 {message.text}'''
 
 
 
 def inChatReplyPrompt(message: Message):
-	return f'''please reply {message.person.he()} said
+	return f'''please reply {message.person.he()} said and try to keep the chat going and don't worry about switching the topic if you need to also don't mention {message.person.his()} name unless it's necessary
 
 {message.text}'''
 

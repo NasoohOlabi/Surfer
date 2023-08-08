@@ -1,0 +1,1 @@
+[].slice.call(document.getElementsByTagName('a')).filter(a => a.innerText === 'New chat')[0].click()

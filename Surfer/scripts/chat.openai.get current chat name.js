@@ -1,0 +1,1 @@
+return document.querySelectorAll('a.bg-gray-800')[0].innerText

@@ -1,57 +1,75 @@
-import time
 import random
+import time
+from typing import Any, Iterator
+
+import selenium.webdriver as webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
 from ..Feed import Feed
-from typing import Iterator, Any
+from ..util import N, uuid
+from .RedditPostFeed import RedditPostFeed
+
 
 class RedditFeed(Feed):
-	def __init__(self, driver):
-		super().__init__('Reddit Feed')
-		# Store the WebDriver instance
-		self.driver = driver
-		self.driver.get('https://www.reddit.com/')
-
-		# Find the div[data-scroller-first] element
-		self.first_element = WebDriverWait(self.driver, 10).until(
-			EC.presence_of_element_located((By.CSS_SELECTOR, 'div[data-scroller-first]'))
-		)
-		print(self.first_element)
+	def __init__(self, driver:webdriver.Chrome,skip=True,handle:str|None=None,verbose=False,subreddit:str|None=None,newWindow=True):
+		super().__init__(name='Reddit Feed',handle=handle,driver=driver)
+		self.verbose = verbose
+		if newWindow:
+			self.parent_handel = driver.current_window_handle
+			driver.switch_to.new_window()
+			self.handle = driver.current_window_handle
+		if not skip:
+			self.driver.get('https://www.reddit.com/'+ (f'r/{subreddit}/' if subreddit is not None else ''))
+			self.handle = self.driver.current_window_handle
+			self.run_script('surfer.listen to clicks')()
+		self.run_script('reddit.init_reddit',verbose=self.verbose)()
+	
 
 	def __iter__(self) -> Iterator[Any]:
-	  # Check if there are no more siblings
-		if not self.first_element:
-			raise StopIteration
+		while True:
+			self.focus()
+			if not self.run_script('surfer.check cursor',verbose=self.verbose)():
+				continue
+			self.run_script('surfer.scroll 2 cursor',verbose=self.verbose)(N(bounds=[0,1]),N(bounds=[0,1]),random.randint(1,25)/100)
+			for i in range(10):
+				if self.run_script('surfer.check still scrolling')():
+					time.sleep(0.1)
+				else:
+					break
+				if i == 9:
+					raise Exception('Not finished scrolling')
+			yield self.run_script('reddit.parse post',verbose=self.verbose)()
+			self.run_script('surfer.cursor next')()
 
-		# Scroll the first element into view with random scroll position
-		self.scroll_element_into_view(self.first_element, random.uniform(0.2, 0.8))
-
-		# Get the parent element of the first_element
-		parent_element = self.first_element.find_element(By.XPATH, '..')
-
-		# Get all the child elements (siblings) of the parent_element
-		siblings = parent_element.find_elements(By.XPATH, '*')
-
-		# Iterate over the siblings and yield their text
-		for sibling in siblings:
-			# Scroll each sibling element into view with random scroll position
-			self.scroll_element_into_view(sibling, random.uniform(0.2, 0.8))  # Add random scroll position between 0.2 and 0.8
-			yield sibling.text
-
-		# Set the first_element to None to mark the end of iteration
-		self.first_element = None
-
-	def scroll_element_into_view(self, element, scroll_position=0.5):
-		# Get the element's height
-		element_height = element.size['height']
-
-		# Calculate the target scroll position based on the element's height and the given scroll position
-		target_scroll_position = element.location['y'] + element_height * scroll_position
-
-		# Scroll the page to the target scroll position using JavaScript
-		self.driver.execute_script("window.scrollTo(0, arguments[0]);", target_scroll_position)
+	def click_post(self, newTab=True):
+		for i in range(10): # 10 retries
+			self.focus()
+			if i == 9:
+				raise Exception('cursor not present')
+			if not self.run_script('surfer.check cursor',verbose=self.verbose)():
+				continue
+			else:
+				break
+  
+		id = uuid()
+		self.run_script('surfer.mark cursor', verbose=self.verbose)(id)
+		# Find the DOM element to click on
+		sel = f'.{id}'
+		element = self.driver.find_element(By.CSS_SELECTOR, sel)
+		h3 = element.find_element(By.CSS_SELECTOR,'h3')
+		element = element if h3 is None else h3
+		actions = ActionChains(self.driver)
+		actions \
+			.click(element) \
+			.perform()
+			# .key_down(Keys.CONTROL) \
+			# .key_up(Keys.CONTROL) \
+		return RedditPostFeed(self.driver,self.handle,verbose=self.verbose)
 
 	def close(self):
+		self.focus()
 		# Close the WebDriver instance
 		self.driver.quit()

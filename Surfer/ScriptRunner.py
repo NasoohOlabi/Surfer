@@ -10,7 +10,12 @@ class ScriptRunner:
     from typing import Any
     def script(*args:Any):
       script_string = ScriptRunner.get_script(_folder,name)(*args)
-      answer = self.driver.execute_script(script_string)
+      try:
+        answer = self.driver.execute_script(script_string)
+      except Exception as e:
+        print('the following script crashed!')
+        print(script_string)
+        raise e
       if verbose:
         print('script_string: ',script_string,' Answer: ', answer)
       return answer

@@ -11,6 +11,9 @@ const intervalId = setInterval(() => {
 	console.log(`filteredElements : `);
 	console.log(filteredElements);
 	window.cursor = filteredElements.length > 0 ? filteredElements[0] : elements[0];
+	while (window.cursor.innerText.trim().length === 0 || window.cursor.querySelector('i.icon.icon-pin_fill')) {
+		window.cursor = window.cursor.nextElementSibling
+	}
 	console.log(`window.cursor : `);
 	console.log(window.cursor);
 	if (cursor) {

@@ -1,3 +1,5 @@
 from .Browser import GetBrowser
-from .RedditBot.RedditFeed import RedditFeed
+from .ChatGPTBot.ChatGPT import ChatGPT, ChatGPTWebsite
 from .Feed import Feed
+from .RedditBot.RedditFeed import RedditFeed
+from .RedditBot.RedditPostFeed import RedditPostFeed

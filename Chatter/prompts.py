@@ -4,7 +4,7 @@ from typing import List
 from Bot import Message, Person
 
 TEXT_MESSAGE_SIZE = 30
-FORMAT = f"""(use around {TEXT_MESSAGE_SIZE} words don't use emoticons)"""
+FORMAT = f"""(use around {TEXT_MESSAGE_SIZE} words don't use emoticons and don't wrap your answer with quotes)"""
 
 def setup(alice:Person,bob:Person):
 	return f"{alice.get_description()} and {bob.get_description()}. and they have been friends for a long time"
@@ -14,7 +14,7 @@ def chat_prompt(messages: List[Message]):
 	return f"Can you please continue this chat(keep chat going and interesting ask many questions)\n```{chat_str}```"
 
 def start_conversation_with_post(alice:Person,bob:Person,post):
-	return f"start conversation {FORMAT} about this post `{post}`"
+	return f"start conversation {FORMAT} about a post titled `{post['title']}` it says `{post['excerpt']}`"
 
 
 def startChatReplyPrompt(message: Message):
@@ -26,6 +26,11 @@ def startChatReplyPrompt(message: Message):
 
 def inChatReplyPrompt(message: Message):
 	return f'''please reply {message.person.he()} said and try to keep the chat going and don't worry about switching the topic if you need to also don't mention {message.person.his()} name unless it's necessary {FORMAT}
+
+{message.text}'''
+
+def endChatReplyPrompt(message: Message):
+	return f'''please wrap up the chat with {message.person.him()}. {FORMAT} {message.person.he()}  said
 
 {message.text}'''
 

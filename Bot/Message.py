@@ -1,15 +1,30 @@
+import json
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Literal,List
+from datetime import datetime
+from typing import Dict, List, Literal, Optional
 
 from .Person import Person
+
 
 @dataclass
 class Message:
     person: Person
     text: str
+    _time: Optional[datetime] = field(init=False,default=None)
+
+    def __post_init__(self):
+        self._time = datetime.now()
+
+    @property
+    def time(self) -> datetime:
+        return self._time # type: ignore
+
     def __str__(self):
-      return f"{self.person.first_name}: `{self.text}`"
+        return json.dumps({
+            'person': f"{self.person.first_name} {self.person.last_name}",
+            'text': self.text,
+            'time': self.time.strftime('%Y-%m-%d %H:%M:%S') 
+        })
+
     def __repr__(self):
-      return f"{self.person.first_name}: `{self.text}`"
-
-
+        return self.__str__()

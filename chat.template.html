@@ -31,6 +31,27 @@
 			h1 {
 				text-align: center;
 			}
+			/* Table style */
+			chat-container table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: center;
+			}
+
+			/* Table row style */
+			chat-container tr {
+				background-color: #f2f2f2;
+			}
+
+			/* Key column style */
+			chat-container td:first-child {
+				font-weight: bold;
+			}
+
+			/* Value column style */
+			chat-container td:last-child {
+				color: blue;
+			}
 
 			.time {
 				font-size: 12px;
@@ -59,6 +80,16 @@
 				background-color: #66c2ff;
 				color: #fff;
 			}
+			.flex {
+				display: flex;
+			}
+			.justify-content-center {
+				justify-content: center;
+				align-items: center;
+			}
+			.align-items-center {
+				align-items: center;
+			}
 			.flex-row {
 				display: flex;
 				flex-direction: row;
@@ -74,6 +105,9 @@
 		</style>
 	</head>
 	<body>
+		<div class="flex justify-content-center align-items-center">
+			$summary $image $image_details
+		</div>
 		<div class="chat-container" id="chat-container">
 			<div class="row">
 				<div class="left-cell">
@@ -87,55 +121,91 @@
 		</div>
 
 		<script>
-			const populate = (chatContainer) => (message, e_message) => {
-				const md = (message, col_class) => {
-					const messageDiv = document.createElement("div");
-					messageDiv.classList.add("message");
-
-					const personSpan = document.createElement("span");
-					personSpan.classList.add("person");
-					personSpan.textContent = message.person;
-
-					const timeSpan = document.createElement("span");
-					timeSpan.classList.add("time");
-					timeSpan.textContent = message.time;
-
-					const textDiv = document.createElement("div");
-					textDiv.classList.add("text");
-					textDiv.textContent = message.text;
-
-					messageDiv.appendChild(personSpan);
-					messageDiv.appendChild(timeSpan);
-					messageDiv.appendChild(textDiv);
-
-					const cell = document.createElement("div");
-					cell.classList.add(col_class);
-
-					if (message.person === "alice nice") {
-						messageDiv.classList.add("user-message");
-						cell.classList.add("flex-row-reverse");
-					} else {
-						messageDiv.classList.add("other-message");
-						cell.classList.add("flex-row");
-					}
-					cell.appendChild(messageDiv);
-					return cell;
+			const tb = (stats_data) => {
+				const t = document.createElement("table");
+				const tr = (k, v) => {
+					const tr_kv = document.createElement("tr");
+					const td_k = document.createElement("td");
+					const td_v = document.createElement("td");
+					td_k.innerText = k;
+					td_v.innerText = v;
+					tr_kv.appendChild(td_k);
+					tr_kv.appendChild(td_v);
+					return tr_kv;
 				};
-				const row = document.createElement("div");
-				row.classList.add("row");
-
-				row.appendChild(md(message, "left-cell"));
-				row.appendChild(md(e_message, "right-cell"));
-				chatContainer.appendChild(row);
+				Object.entries(stats_data).forEach(([k, v]) => {
+					t.appendChild(tr(k, v));
+				});
+				return t;
 			};
+			const populate =
+				(chatContainer) => (message, e_message, stats_data) => {
+					const md = (message, col_class, stats_data) => {
+						const messageDiv = document.createElement("div");
+						messageDiv.classList.add("message");
+
+						const personSpan = document.createElement("span");
+						personSpan.classList.add("person");
+						personSpan.textContent = message.person;
+
+						const timeSpan = document.createElement("span");
+						timeSpan.classList.add("time");
+						timeSpan.textContent = message.time;
+
+						const textDiv = document.createElement("div");
+						textDiv.classList.add("text");
+						textDiv.textContent = message.text;
+
+						messageDiv.appendChild(personSpan);
+						messageDiv.appendChild(timeSpan);
+						messageDiv.appendChild(textDiv);
+
+						const cell = document.createElement("div");
+						cell.classList.add(col_class);
+
+						if (message.person === "alice nice") {
+							messageDiv.classList.add("user-message");
+							cell.classList.add("flex-row-reverse");
+						} else {
+							messageDiv.classList.add("other-message");
+							cell.classList.add("flex-row");
+						}
+						cell.appendChild(messageDiv);
+
+						if (stats_data) {
+							cell.appendChild(tb(stats_data));
+						}
+						return cell;
+					};
+					const row = document.createElement("div");
+					row.classList.add("row");
+
+					row.appendChild(md(message, "left-cell"));
+					row.appendChild(md(e_message, "right-cell", stats_data));
+					chatContainer.appendChild(row);
+				};
 
 			let e_messages = $encoded_chat;
+			let e_messages_data = $encoded_chat_data;
 			let messages = $normal_chat;
 
 			const chatContainer = document.getElementById("chat-container");
 
 			for (let i = 0; i < messages.length; i++) {
-				populate(chatContainer)(messages[i], e_messages[i]);
+				console.log(
+					`${i} % 2 == 0(${i % 2 == 0}) ? e_messages_data[${i / 2}](${
+						e_messages_data[i / 2]
+					}) : undefined`
+				);
+				populate(chatContainer)(
+					messages[i],
+					e_messages[i],
+					i === messages.length - 1
+						? e_messages_data[Math.ceil(i / 2)]
+						: i % 2 == 0
+						? e_messages_data[i / 2]
+						: undefined
+				);
 			}
 		</script>
 	</body>

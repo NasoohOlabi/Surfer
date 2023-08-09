@@ -1,4 +1,6 @@
 import time
+import tkinter as tk
+from tkinter import messagebox
 from typing import Tuple
 
 import selenium.webdriver as webdriver
@@ -11,6 +13,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from ..ScriptRunner import ScriptRunner
 
+
+def show_blocking_popup():
+  messagebox.showinfo("Help Captcha!", "Please solve the Puzzle then press OK.")
 
 class ChatGPTWebsite:
 	def __init__(self, driver:webdriver.Chrome,skip=True,handle:str|None=None,verbose=False,newWindow=True):
@@ -72,12 +77,12 @@ class ChatGPT:
 		self.driver.find_element(By.CSS_SELECTOR,'textarea + button').click()
 		svg_path = 'M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15'
 		try:
-			WebDriverWait(self.driver, 60).until(
+			WebDriverWait(self.driver, 30).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, f'[d="{svg_path}"]'))
 			)
 		except:
-			input('>>> Bot check please notify when done!...')
-			WebDriverWait(self.driver, 60).until(
+			show_blocking_popup()
+			WebDriverWait(self.driver, 30).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, f'[d="{svg_path}"]'))
 			)
 		time.sleep(5)

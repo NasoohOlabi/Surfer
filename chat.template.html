@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chat Interface</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				margin: 0;
+				padding: 0;
+			}
+
+			.chat-container {
+				width: 100%;
+				margin: 0 auto;
+				padding: 20px;
+			}
+
+			.message {
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 10px;
+				max-width: 30vw;
+			}
+
+			.person {
+				font-weight: bold;
+			}
+			h1 {
+				text-align: center;
+			}
+
+			.time {
+				font-size: 12px;
+				padding: 1.5rem;
+			}
+			.user-message > .time {
+				color: #444;
+			}
+			.other-message > .time {
+				color: #888888;
+			}
+			.text {
+				margin-top: 5px;
+			}
+			.row {
+				display: flex;
+				width: 100%;
+			}
+			.left-cell {
+				width: 50%;
+			}
+			.right-cell {
+				width: 50%;
+			}
+			.user-message {
+				background-color: #66c2ff;
+				color: #fff;
+			}
+			.flex-row {
+				display: flex;
+				flex-direction: row;
+			}
+			.flex-row-reverse {
+				display: flex;
+				flex-direction: row-reverse;
+			}
+			.other-message {
+				background-color: #f5f5f5;
+				color: #333;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="chat-container" id="chat-container">
+			<div class="row">
+				<div class="left-cell">
+					<h1>Generated Chat</h1>
+				</div>
+				<div class="right-cell">
+					<h1>Alice Sending Chat</h1>
+				</div>
+			</div>
+			<!-- Messages will be dynamically added here -->
+		</div>
+
+		<script>
+			const populate = (chatContainer) => (message, e_message) => {
+				const md = (message, col_class) => {
+					const messageDiv = document.createElement("div");
+					messageDiv.classList.add("message");
+
+					const personSpan = document.createElement("span");
+					personSpan.classList.add("person");
+					personSpan.textContent = message.person;
+
+					const timeSpan = document.createElement("span");
+					timeSpan.classList.add("time");
+					timeSpan.textContent = message.time;
+
+					const textDiv = document.createElement("div");
+					textDiv.classList.add("text");
+					textDiv.textContent = message.text;
+
+					messageDiv.appendChild(personSpan);
+					messageDiv.appendChild(timeSpan);
+					messageDiv.appendChild(textDiv);
+
+					const cell = document.createElement("div");
+					cell.classList.add(col_class);
+
+					if (message.person === "alice nice") {
+						messageDiv.classList.add("user-message");
+						cell.classList.add("flex-row-reverse");
+					} else {
+						messageDiv.classList.add("other-message");
+						cell.classList.add("flex-row");
+					}
+					cell.appendChild(messageDiv);
+					return cell;
+				};
+				const row = document.createElement("div");
+				row.classList.add("row");
+
+				row.appendChild(md(message, "left-cell"));
+				row.appendChild(md(e_message, "right-cell"));
+				chatContainer.appendChild(row);
+			};
+
+			let e_messages = $encoded_chat;
+			let messages = $normal_chat;
+
+			const chatContainer = document.getElementById("chat-container");
+
+			for (let i = 0; i < messages.length; i++) {
+				populate(chatContainer)(messages[i], e_messages[i]);
+			}
+		</script>
+	</body>
+</html>

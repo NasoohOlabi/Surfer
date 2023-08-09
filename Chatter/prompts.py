@@ -25,12 +25,12 @@ def startChatReplyPrompt(message: Message):
 
 
 def inChatReplyPrompt(message: Message,backup_post):
-	return f'''please reply to what {message.person.he()} said and try to keep the chat going and you can switch the topic to this post if only if necessary `{backup_post['title']}` if you need to {FORMAT}
+	return f'''please reply {FORMAT}
 
 {message.text}'''
 
 def endChatReplyPrompt(message: Message):
-	return f'''please wrap up the chat with {message.person.him()}. {FORMAT} {message.person.he()}  said
+	return f'''please wrap up the chat. {FORMAT} {message.person.he()}  said
 
 {message.text}'''
 

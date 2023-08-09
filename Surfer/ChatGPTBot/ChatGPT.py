@@ -40,7 +40,13 @@ class ChatGPT:
 		self.name = name
 		self.window = window
 
-	def ask(self,prompt:str, newChat:bool = False) -> Tuple[str, 'ChatGPT']:
+	def ask(self,prompt:str) -> str:
+		return self._ask(prompt)[0]
+	
+	def askNew(self,prompt:str) -> Tuple[str, 'ChatGPT']:
+		return self._ask(prompt,True)
+	
+	def _ask(self,prompt:str, newChat:bool = False) -> Tuple[str, 'ChatGPT']:
 		self.window.focus()
 		if newChat:
 			self.run_script('chat.openai.new chat')()

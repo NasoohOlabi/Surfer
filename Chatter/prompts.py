@@ -3,7 +3,7 @@ from typing import List
 
 from Bot import Message, Person
 
-TEXT_MESSAGE_SIZE = 30
+TEXT_MESSAGE_SIZE = 35
 FORMAT = f"""(use around {TEXT_MESSAGE_SIZE} words don't use emoticons and don't wrap your answer with quotes)"""
 
 def setup(alice:Person,bob:Person):
@@ -24,8 +24,8 @@ def startChatReplyPrompt(message: Message):
 
 
 
-def inChatReplyPrompt(message: Message):
-	return f'''please reply {message.person.he()} said and try to keep the chat going and don't worry about switching the topic if you need to also don't mention {message.person.his()} name unless it's necessary {FORMAT}
+def inChatReplyPrompt(message: Message,backup_post):
+	return f'''please reply to what {message.person.he()} said and try to keep the chat going and you can switch the topic to this post if only if necessary `{backup_post['title']}` if you need to {FORMAT}
 
 {message.text}'''
 

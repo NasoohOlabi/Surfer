@@ -10,11 +10,19 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+from win10toast import ToastNotifier
 
 from ..ScriptRunner import ScriptRunner
 
 
 def show_blocking_popup():
+  toast = ToastNotifier()
+  toast.show_toast(
+    "Help Captcha!"
+    "Please solve the Puzzle then press OK.",
+    duration = 20,
+    threaded = True,
+)
   messagebox.showinfo("Help Captcha!", "Please solve the Puzzle then press OK.")
 
 class ChatGPTWebsite:

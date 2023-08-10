@@ -6,33 +6,66 @@ from Bot import Message, Person
 TEXT_MESSAGE_SIZE = 35
 FORMAT = f"""(use around {TEXT_MESSAGE_SIZE} words don't use emoticons and don't wrap your answer with quotes)"""
 
-def setup(alice:Person,bob:Person):
-	return f"{alice.get_description()} and {bob.get_description()}. and they have been friends for a long time"
+
+def converse_with_gpt3(prompt: str, temperature: float):
+    response = openai.Completion.create(
+        engine="gpt-3.5-turbo",
+        prompt=prompt,
+        max_tokens=100,
+        temperature=temperature,
+        n=1,
+        stop=None
+    )
+    return response.choices[0].text.strip()
+
+def setup(alice:Person, bob:Person):
+    return f"{alice.get_description()} and {bob.get_description()}, and they have been friends for a long time."
 
 def chat_prompt(messages: List[Message]):
-	chat_str = '\n'.join([f"{message.person.first_name}: {message.text}" for message in messages])
-	return f"Can you please continue this chat(keep chat going and interesting ask many questions)\n```{chat_str}```"
+    chat_str = '\n'.join([f"{message.person.first_name}: {message.text}" for message in messages])
+    return f"Can you please continue this chat (keep chat going and interesting, ask many questions)\n```
 
-def start_conversation_with_post(alice:Person,bob:Person,post):
-	return f"start conversation {FORMAT} about a post titled `{post['title']}` it says `{post['excerpt']}`"
-
+def start_conversation_with_post(alice:Person, bob:Person, post):
+    return f"Start a conversation about a post titled `{post['title']}`. It says `{post['excerpt']}`."
 
 def startChatReplyPrompt(message: Message):
-	return f'''my friend sent me this message please write a reply {FORMAT}
+    return f'''My friend sent me this message. Please write a reply with {FORMAT}.
 
 {message.text}'''
 
-
-
-def inChatReplyPrompt(message: Message,backup_post):
-	return f'''please reply {FORMAT}
+def inChatReplyPrompt(message: Message, backup_post):
+    return f'''Please reply with {FORMAT}.
 
 {message.text}'''
 
 def endChatReplyPrompt(message: Message):
-	return f'''please wrap up the chat. {FORMAT} {message.person.he()}  said
+    return f'''Please wrap up the chat. {FORMAT}
+{message.person.he()} said.'''
 
-{message.text}'''
+# Set the temperature for generating responses
+temperature = 0.7
+
+# Using random seed for conversation randomness
+random.seed()
+
+
+# Start the conversation
+alice = Person("Alice")
+bob = Person("Bob")
+conversation = setup(alice, bob)
+prompt = chat_prompt([Message(alice, conversation)])
+response = converse_with_gpt3(prompt, temperature)
+print(f'{bob.first_name}: {response}')
+
+# Continue the conversation
+prompt = chat_prompt([Message(alice, conversation), Message(bob, response)])
+response = converse_with_gpt3(prompt, temperature)
+print(f'{alice.first_name}: {response}')
+
+# End the conversation
+prompt = chat_prompt([Message(alice, conversation), Message(bob, response), Message(alice, "That's all for now!")])
+response = converse_with_gpt3(prompt, temperature)
+print(f'{bob.first_name}: {response}')
 
 
 

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chat Interface</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				margin: 0;
+				padding: 0;
+			}
+
+			.chat-container {
+				width: 100%;
+				margin: 0 auto;
+				padding: 20px;
+			}
+
+			.message {
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 10px;
+				max-width: 30vw;
+			}
+
+			.person {
+				font-weight: bold;
+			}
+			h1 {
+				text-align: center;
+			}
+			/* Table style */
+			chat-container table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: center;
+			}
+
+			/* Table row style */
+			chat-container tr {
+				background-color: #f2f2f2;
+			}
+
+			/* Key column style */
+			chat-container td:first-child {
+				font-weight: bold;
+			}
+
+			/* Value column style */
+			chat-container td:last-child {
+				color: blue;
+			}
+
+			.time {
+				font-size: 12px;
+				padding: 1.5rem;
+			}
+			.user-message > .time {
+				color: #444;
+			}
+			.other-message > .time {
+				color: #888888;
+			}
+			.text {
+				margin-top: 5px;
+			}
+			.row {
+				display: flex;
+				width: 100%;
+			}
+			.left-cell {
+				width: 50%;
+			}
+			.right-cell {
+				width: 50%;
+			}
+			.user-message {
+				background-color: #66c2ff;
+				color: #fff;
+			}
+			.flex {
+				display: flex;
+			}
+			.justify-content-center {
+				justify-content: center;
+				align-items: center;
+			}
+			.align-items-center {
+				align-items: center;
+			}
+			.flex-row {
+				display: flex;
+				flex-direction: row;
+			}
+			.flex-row-reverse {
+				display: flex;
+				flex-direction: row-reverse;
+			}
+			.other-message {
+				background-color: #f5f5f5;
+				color: #333;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="flex justify-content-center align-items-center">
+			<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>bits</th>
+      <th>cover size</th>
+      <th>capacity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>292</td>
+      <td>648</td>
+      <td>46</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>205</td>
+      <td>476</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>147</td>
+      <td>311</td>
+      <td>44</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>220</td>
+      <td>479</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>292</td>
+      <td>648</td>
+      <td>46</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>364</td>
+      <td>816</td>
+      <td>46</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>437</td>
+      <td>984</td>
+      <td>47</td>
+    </tr>
+  </tbody>
+</table>  
+		</div>
+		<div class="chat-container" id="chat-container">
+			<div class="row">
+				<div class="left-cell">
+					<h1>Generated Chat</h1>
+				</div>
+				<div class="right-cell">
+					<h1>Alice Sending Chat</h1>
+				</div>
+			</div>
+			<!-- Messages will be dynamically added here -->
+		</div>
+
+		<script>
+			const tb = (stats_data) => {
+				const t = document.createElement("table");
+				const tr = (k, v) => {
+					const tr_kv = document.createElement("tr");
+					const td_k = document.createElement("td");
+					const td_v = document.createElement("td");
+					td_k.innerText = k;
+					td_v.innerText = v;
+					tr_kv.appendChild(td_k);
+					tr_kv.appendChild(td_v);
+					return tr_kv;
+				};
+				Object.entries(stats_data).forEach(([k, v]) => {
+					t.appendChild(tr(k, v));
+				});
+				return t;
+			};
+			const populate =
+				(chatContainer) => (message, e_message, stats_data) => {
+					const md = (message, col_class, stats_data) => {
+						const messageDiv = document.createElement("div");
+						messageDiv.classList.add("message");
+
+						const personSpan = document.createElement("span");
+						personSpan.classList.add("person");
+						personSpan.textContent = message.person;
+
+						const timeSpan = document.createElement("span");
+						timeSpan.classList.add("time");
+						timeSpan.textContent = message.time;
+
+						const textDiv = document.createElement("div");
+						textDiv.classList.add("text");
+						textDiv.textContent = message.text;
+
+						messageDiv.appendChild(personSpan);
+						messageDiv.appendChild(timeSpan);
+						messageDiv.appendChild(textDiv);
+
+						const cell = document.createElement("div");
+						cell.classList.add(col_class);
+
+						if (message.person === "alice nice") {
+							messageDiv.classList.add("user-message");
+							cell.classList.add("flex-row-reverse");
+						} else {
+							messageDiv.classList.add("other-message");
+							cell.classList.add("flex-row");
+						}
+						cell.appendChild(messageDiv);
+
+						if (stats_data) {
+							cell.appendChild(tb(stats_data));
+						}
+						return cell;
+					};
+					const row = document.createElement("div");
+					row.classList.add("row");
+
+					row.appendChild(md(message, "left-cell"));
+					row.appendChild(md(e_message, "right-cell", stats_data));
+					chatContainer.appendChild(row);
+				};
+
+			let e_messages = [{"person": "alice nice", "text": "Navigating salary discussions can be challenging. Highlight your accomplishments like exceeding targets. Mention your contributions to team success, innovation, and enhanced processes. Emphasize the value you bring and how it justifies the raise.", "time": "2023-08-11 16:07:15"}, {"person": "bob wick", "text": "Acknowledge difficulties. Spotlight achievements: surpassing goals, team impact, process enhancement. Emphasize value warranting raise.", "time": "2023-08-11 16:07:27"}, {"person": "alice nice", "text": "Understood, challenges noted. My achievements include surpassing goals, impactful teamwork, and process improvements. These contributions justify the requested raise.", "time": "2023-08-11 16:07:41"}, {"person": "bob wick", "text": "Impressive strategy! Did you know that studies show employees who effectively communicate accomplishments are more likely to receive the raise they deserve? Your approach seems spot on.", "time": "2023-08-11 16:07:55"}, {"person": "alice nice", "text": "Absolutely, communication is key. Interesting fact: Companies with transparent salary structures tend to have higher employee satisfaction and retention rates. It's all about recognizing and rewarding contributions.", "time": "2023-08-11 16:08:08"}, {"person": "bob wick", "text": "Fascinating insight! Also, did you know that negotiation skills play a role? Those who negotiate their salaries often earn more over their careers. It's about advocating for your worth.", "time": "2023-08-11 16:08:22"}, {"person": "alice nice", "text": "Absolutely, negotiation matters. Intriguing fact: A study found that women tend to negotiate their salaries less than men, contributing to the gender pay gap. Empowering everyone to negotiate is vital.", "time": "2023-08-11 16:08:36"}, {"person": "bob wick", "text": "Great point! Did you know practicing negotiation boosts confidence? It's a skill that goes beyond salaries. Everyday situations benefit too, from buying a car to reaching agreements in various aspects of life.", "time": "2023-08-11 16:08:49"}, {"person": "alice nice", "text": "Absolutely, negotiation builds confidence. Fun fact: FBI hostage negotiators use similar techniques in high-stakes situations. It's a skill that transforms interactions on multiple fronts, making life more dynamic and rewarding.", "time": "2023-08-11 16:09:02"}, {"person": "bob wick", "text": "Intriguing parallel! Negotiation's impact reaches unexpected places. Similar techniques underline success in diverse fields, from business to law enforcement. It's all about effective communication and understanding.", "time": "2023-08-11 16:09:16"}, {"person": "alice nice", "text": "Absolutely, negotiation's reach is fascinating. Surprising fact: Improving negotiation skills can enhance empathy and conflict resolution, benefiting personal relationships and fostering a more harmonious society. It's a ripple effect.", "time": "2023-08-11 16:09:32"}, {"person": "bob wick", "text": "Impressive impact! Did you know negotiation training is used in medical schools? It helps doctors navigate difficult conversations with patients and their families, showing how versatile and valuable this skill truly is.", "time": "2023-08-11 16:09:47"}, {"person": "alice nice", "text": "Absolutely, negotiation's versatility is remarkable. Surprising fact: Astronauts undergo negotiation training to manage stress and conflicts during missions, showcasing its relevance even beyond Earth's boundaries. It's an interstellar skill.", "time": "2023-08-11 16:10:00"}, {"person": "bob wick", "text": "Fascinating twist! Negotiation's cosmic role is intriguing. Also, diplomats rely on these skills. It's a bridge between Earthly and space challenges, highlighting its universal importance.", "time": "2023-08-11 16:10:14"}, {"person": "alice nice", "text": "Absolutely, negotiation's universal relevance is captivating. Fun fact: The UN uses negotiation techniques for conflict resolution, demonstrating how it unites global perspectives for a more harmonious world. A diplomatic dance.", "time": "2023-08-11 16:10:29"}, {"person": "bob wick", "text": "Impressive connection! Negotiation as a global harmony tool is intriguing. Did you know that historical treaties and agreements shaped nations? Negotiation has a profound impact on shaping our world's history and future.", "time": "2023-08-11 16:10:42"}, {"person": "alice nice", "text": "Absolutely, negotiation's historical influence is captivating. Surprising fact: The Treaty of Versailles after WWI significantly shaped geopolitics, underscoring how negotiation wields immense power in shaping the course of nations. A pivotal role.", "time": "2023-08-11 16:10:56"}, {"person": "bob wick", "text": "Impressive example! Did you know the art of negotiation traces back to ancient civilizations like the Greeks and Romans? It's an age-old practice that continues to shape our modern world.", "time": "2023-08-11 16:11:10"}, {"person": "alice nice", "text": "Absolutely, negotiation's ancient roots are captivating. Fun fact: The Code of Hammurabi, one of the oldest legal codes, incorporated negotiation principles, reflecting its enduring importance in societal structures throughout history. Timeless wisdom.", "time": "2023-08-11 16:11:23"}, {"person": "alice nice", "text": "Indeed, negotiation's legacy is fascinating. Exploring its rich history adds depth to our understanding. Wishing you success in your interview and future negotiations. Stay empowered!", "time": "2023-08-11 16:11:37"}];
+			let e_messages_data = [{"bits": 437, "cover size": 984, "capacity": "44%"}, {"bits": 147, "cover size": 311, "capacity": "47%"}];
+			let messages = [{"person": "alice nice", "text": "Navigating salary discussions can be challenging. Highlight your accomplishments like exceeding targets. Mention your contributions to team success, innovation, and enhanced processes. Emphasize the value you bring and how it justifies the raise.", "time": "2023-08-11 16:07:15"}, {"person": "bob wick", "text": "Acknowledge difficulties. Spotlight achievements: surpassing goals, team impact, process enhancement. Emphasize value warranting raise.", "time": "2023-08-11 16:07:27"}, {"person": "alice nice", "text": "Understood, challenges noted. My achievements include surpassing goals, impactful teamwork, and process improvements. These contributions justify the requested raise.", "time": "2023-08-11 16:07:41"}, {"person": "bob wick", "text": "Impressive strategy! Did you know that studies show employees who effectively communicate accomplishments are more likely to receive the raise they deserve? Your approach seems spot on.", "time": "2023-08-11 16:07:55"}, {"person": "alice nice", "text": "Absolutely, communication is key. Interesting fact: Companies with transparent salary structures tend to have higher employee satisfaction and retention rates. It's all about recognizing and rewarding contributions.", "time": "2023-08-11 16:08:08"}, {"person": "bob wick", "text": "Fascinating insight! Also, did you know that negotiation skills play a role? Those who negotiate their salaries often earn more over their careers. It's about advocating for your worth.", "time": "2023-08-11 16:08:22"}, {"person": "alice nice", "text": "Absolutely, negotiation matters. Intriguing fact: A study found that women tend to negotiate their salaries less than men, contributing to the gender pay gap. Empowering everyone to negotiate is vital.", "time": "2023-08-11 16:08:36"}, {"person": "bob wick", "text": "Great point! Did you know practicing negotiation boosts confidence? It's a skill that goes beyond salaries. Everyday situations benefit too, from buying a car to reaching agreements in various aspects of life.", "time": "2023-08-11 16:08:49"}, {"person": "alice nice", "text": "Absolutely, negotiation builds confidence. Fun fact: FBI hostage negotiators use similar techniques in high-stakes situations. It's a skill that transforms interactions on multiple fronts, making life more dynamic and rewarding.", "time": "2023-08-11 16:09:02"}, {"person": "bob wick", "text": "Intriguing parallel! Negotiation's impact reaches unexpected places. Similar techniques underline success in diverse fields, from business to law enforcement. It's all about effective communication and understanding.", "time": "2023-08-11 16:09:16"}, {"person": "alice nice", "text": "Absolutely, negotiation's reach is fascinating. Surprising fact: Improving negotiation skills can enhance empathy and conflict resolution, benefiting personal relationships and fostering a more harmonious society. It's a ripple effect.", "time": "2023-08-11 16:09:32"}, {"person": "bob wick", "text": "Impressive impact! Did you know negotiation training is used in medical schools? It helps doctors navigate difficult conversations with patients and their families, showing how versatile and valuable this skill truly is.", "time": "2023-08-11 16:09:47"}, {"person": "alice nice", "text": "Absolutely, negotiation's versatility is remarkable. Surprising fact: Astronauts undergo negotiation training to manage stress and conflicts during missions, showcasing its relevance even beyond Earth's boundaries. It's an interstellar skill.", "time": "2023-08-11 16:10:00"}, {"person": "bob wick", "text": "Fascinating twist! Negotiation's cosmic role is intriguing. Also, diplomats rely on these skills. It's a bridge between Earthly and space challenges, highlighting its universal importance.", "time": "2023-08-11 16:10:14"}, {"person": "alice nice", "text": "Absolutely, negotiation's universal relevance is captivating. Fun fact: The UN uses negotiation techniques for conflict resolution, demonstrating how it unites global perspectives for a more harmonious world. A diplomatic dance.", "time": "2023-08-11 16:10:29"}, {"person": "bob wick", "text": "Impressive connection! Negotiation as a global harmony tool is intriguing. Did you know that historical treaties and agreements shaped nations? Negotiation has a profound impact on shaping our world's history and future.", "time": "2023-08-11 16:10:42"}, {"person": "alice nice", "text": "Absolutely, negotiation's historical influence is captivating. Surprising fact: The Treaty of Versailles after WWI significantly shaped geopolitics, underscoring how negotiation wields immense power in shaping the course of nations. A pivotal role.", "time": "2023-08-11 16:10:56"}, {"person": "bob wick", "text": "Impressive example! Did you know the art of negotiation traces back to ancient civilizations like the Greeks and Romans? It's an age-old practice that continues to shape our modern world.", "time": "2023-08-11 16:11:10"}, {"person": "alice nice", "text": "Absolutely, negotiation's ancient roots are captivating. Fun fact: The Code of Hammurabi, one of the oldest legal codes, incorporated negotiation principles, reflecting its enduring importance in societal structures throughout history. Timeless wisdom.", "time": "2023-08-11 16:11:23"}, {"person": "alice nice", "text": "Indeed, negotiation's legacy is fascinating. Exploring its rich history adds depth to our understanding. Wishing you success in your interview and future negotiations. Stay empowered!", "time": "2023-08-11 16:11:37"}];
+
+			const chatContainer = document.getElementById("chat-container");
+
+			for (let i = 0; i < messages.length; i++) {
+				console.log(
+					`${i} % 2 == 0(${i % 2 == 0}) ? e_messages_data[${i / 2}](${
+						e_messages_data[i / 2]
+					}) : undefined`
+				);
+				populate(chatContainer)(
+					messages[i],
+					e_messages[i],
+					i === messages.length - 1
+						? e_messages_data[Math.ceil(i / 2)]
+						: i % 2 == 0
+						? e_messages_data[i / 2]
+						: undefined
+				);
+			}
+		</script>
+	</body>
+</html>

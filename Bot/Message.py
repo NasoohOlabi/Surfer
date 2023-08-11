@@ -1,6 +1,7 @@
 import json
 from dataclasses import dataclass, field
 from datetime import datetime
+from json import JSONEncoder
 from typing import Dict, List, Literal, Optional
 
 from .Person import Person
@@ -28,3 +29,15 @@ class Message:
 
     def __repr__(self):
         return self.__str__()
+
+
+
+class MessageEncoder(JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, Message):
+      return {
+        'person': f"{obj.person.first_name} {obj.person.last_name}",
+        'text': obj.text,
+        'time': obj.time.strftime('%Y-%m-%d %H:%M:%S')
+      }
+    return super().default(obj)

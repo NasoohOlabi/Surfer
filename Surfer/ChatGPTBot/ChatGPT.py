@@ -38,6 +38,7 @@ class ChatGPTWebsite:
 			self.handle = driver.current_window_handle
 		if not skip:
 			self.driver.get('https://chat.openai.com/')
+			time.sleep(2)
 			self.handle = self.driver.current_window_handle
 			self.run_script('surfer.listen to clicks')()
 	def getLandingNewChat(self):
@@ -60,12 +61,12 @@ class ChatGPT:
 		return self._ask(prompt,True)
 	
 	def _ask(self,prompt:str, newChat:bool = False) -> Tuple[str, 'ChatGPT']:
-		self.window.focus()
 		if newChat:
 			self.run_script('chat.openai.new chat')()
-			WebDriverWait(self.driver, 30).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, 'svg > circle+line+line+line+line+line+line+line+line'))# examples sun in new chat
-			)
+			# WebDriverWait(self.driver, 30).until(
+			# 	EC.presence_of_element_located((By.CSS_SELECTOR, 'svg > circle+line+line+line+line+line+line+line+line'))# examples sun in new chat
+			# )
+			time.sleep(3)
 		else:
 			if self.name:
 				self.run_script('chat.openai.switch to chat name')(self.name)

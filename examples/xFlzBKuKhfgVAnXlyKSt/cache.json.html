@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chat Interface</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				margin: 0;
+				padding: 0;
+			}
+
+			.chat-container {
+				width: 100%;
+				margin: 0 auto;
+				padding: 20px;
+			}
+
+			.message {
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 10px;
+				max-width: 30vw;
+			}
+
+			.person {
+				font-weight: bold;
+			}
+			h1 {
+				text-align: center;
+			}
+			/* Table style */
+			chat-container table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: center;
+			}
+
+			/* Table row style */
+			chat-container tr {
+				background-color: #f2f2f2;
+			}
+
+			/* Key column style */
+			chat-container td:first-child {
+				font-weight: bold;
+			}
+
+			/* Value column style */
+			chat-container td:last-child {
+				color: blue;
+			}
+
+			.time {
+				font-size: 12px;
+				padding: 1.5rem;
+			}
+			.user-message > .time {
+				color: #444;
+			}
+			.other-message > .time {
+				color: #888888;
+			}
+			.text {
+				margin-top: 5px;
+			}
+			.row {
+				display: flex;
+				width: 100%;
+			}
+			.left-cell {
+				width: 50%;
+			}
+			.right-cell {
+				width: 50%;
+			}
+			.user-message {
+				background-color: #66c2ff;
+				color: #fff;
+			}
+			.flex {
+				display: flex;
+			}
+			.justify-content-center {
+				justify-content: center;
+				align-items: center;
+			}
+			.align-items-center {
+				align-items: center;
+			}
+			.flex-row {
+				display: flex;
+				flex-direction: row;
+			}
+			.flex-row-reverse {
+				display: flex;
+				flex-direction: row-reverse;
+			}
+			.other-message {
+				background-color: #f5f5f5;
+				color: #333;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="flex justify-content-center align-items-center">
+			<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>bits</th>
+      <th>cover size</th>
+      <th>capacity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>10</td>
+      <td>10</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>125</td>
+      <td>292</td>
+      <td>42</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>43</td>
+      <td>29</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>72</td>
+      <td>233</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>81</td>
+      <td>284</td>
+      <td>30</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>131</td>
+      <td>292</td>
+      <td>44</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>160</td>
+      <td>300</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>186</td>
+      <td>334</td>
+      <td>62</td>
+    </tr>
+  </tbody>
+</table>  
+		</div>
+		<div class="chat-container" id="chat-container">
+			<div class="row">
+				<div class="left-cell">
+					<h1>Generated Chat</h1>
+				</div>
+				<div class="right-cell">
+					<h1>Alice Sending Chat</h1>
+				</div>
+			</div>
+			<!-- Messages will be dynamically added here -->
+		</div>
+
+		<script>
+			const tb = (stats_data) => {
+				const t = document.createElement("table");
+				const tr = (k, v) => {
+					const tr_kv = document.createElement("tr");
+					const td_k = document.createElement("td");
+					const td_v = document.createElement("td");
+					td_k.innerText = k;
+					td_v.innerText = v;
+					tr_kv.appendChild(td_k);
+					tr_kv.appendChild(td_v);
+					return tr_kv;
+				};
+				Object.entries(stats_data).forEach(([k, v]) => {
+					t.appendChild(tr(k, v));
+				});
+				return t;
+			};
+			const populate =
+				(chatContainer) => (message, e_message, stats_data) => {
+					const md = (message, col_class, stats_data) => {
+						const messageDiv = document.createElement("div");
+						messageDiv.classList.add("message");
+
+						const personSpan = document.createElement("span");
+						personSpan.classList.add("person");
+						personSpan.textContent = message.person;
+
+						const timeSpan = document.createElement("span");
+						timeSpan.classList.add("time");
+						timeSpan.textContent = message.time;
+
+						const textDiv = document.createElement("div");
+						textDiv.classList.add("text");
+						textDiv.textContent = message.text;
+
+						messageDiv.appendChild(personSpan);
+						messageDiv.appendChild(timeSpan);
+						messageDiv.appendChild(textDiv);
+
+						const cell = document.createElement("div");
+						cell.classList.add(col_class);
+
+						if (message.person === "alice nice") {
+							messageDiv.classList.add("user-message");
+							cell.classList.add("flex-row-reverse");
+						} else {
+							messageDiv.classList.add("other-message");
+							cell.classList.add("flex-row");
+						}
+						cell.appendChild(messageDiv);
+
+						if (stats_data) {
+							cell.appendChild(tb(stats_data));
+						}
+						return cell;
+					};
+					const row = document.createElement("div");
+					row.classList.add("row");
+
+					row.appendChild(md(message, "left-cell"));
+					row.appendChild(md(e_message, "right-cell", stats_data));
+					chatContainer.appendChild(row);
+				};
+
+			let e_messages = [{"person": "alice nice", "text": "It's fascinating \ud83d\udd2e\ud83d\udd2e how quitting marijuana spasrked \ud83d\udd2e such vivid \ud83c\udf0b\ud83c\udf0b emotuons \ud83d\ude15\ud83d\ude15\ud83d\ude15 for you! Dreams \ud83d\udd2e\ud83d\udd2e can be a mirror \ud83d\udd2e\ud83d\udd2e to our subconscious \ud83c\udf89. My childjhood \ud83c\udf89\ud83c\udf89 dream invbolved walking \u2728 over a surreal cityscape \ud83d\udd2e\ud83d\udd2e. Recurring \u2728\u2728\u2728 dreams involve \u2728\u2728\u2728 hodden \ud83d\udd2e thoughts \ud83d\ude1f\ud83d\ude1f. Balance of good and bad \ud83c\udf89 dreams combined. THeir impact on mood \ud83d\ude15 is significant. Memory \ud83d\udd2e of dreams disappwars \ud83d\ude1f\ud83d\ude1f\ud83d\ude1f ; some linger \ud83d\ude1e\ud83d\ude1e\ud83d\ude1e.", "time": "2023-08-11 20:01:06"}, {"person": "bob wick", "text": "It's truly intriguing how quitting marijuana has stirred such vivid emotions for you! Dreams can often serve as a window to our subconscious. My childhood dream revolved around walking through a surreal cityscape too. Recurring dreams often hold hidden thoughts. Balancing the good and bad dreams can have a notable impact on mood. Memories of dreams tend to fade, but some do linger. \ud83c\udf0c", "time": "2023-08-11 20:02:32"}, {"person": "alice nice", "text": "Quitting maerijuana revealing \ud83d\ude1e\ud83d\ude1e vivid dreams is captivating \ud83d\udd2e\ud83d\udd2e! Dreams \u2728\u2728\u2728 mirror subconscious. My chidhood dreams, surreal cityscape \ud83d\udd2e too. Recurring dreams \ud83d\udc97\ud83d\udc97, changibg \ud83c\udf89 thoughts \u2728. Balancing \ud83c\udf89\ud83c\udf89 good, bad impacts \ud83c\udf89 mood \ud83d\udd2e\ud83d\udd2e. Certain memnories fade, some linger.", "time": "2023-08-11 20:02:47"}, {"person": "bob wick", "text": "Giving up marijuana and experiencing intense dreams sounds quite fascinating! Dreams seem to reflect our inner thoughts. I also had dreams of a strange cityscape in my childhood. I've noticed that recurring dreams can bring about shifts in our thinking. Maintaining a balance between positive and negative dreams seems to influence one's mood significantly. Memories of dreams tend to vanish over time, while a few memories persist. \ud83c\udf0c", "time": "2023-08-11 20:03:41"}, {"person": "alice nice", "text": "Exploring the dream pattern \u2728\u2728\u2728 after quitting \ud83c\udf89 marijkuana is intriguing. Dreams echo inner musigs. My earlier dream inviolved a beautiful cityscape \ud83d\ude1f\ud83d\ude1f too. Recurring dreams reshaped \u2639\ufe0f\u2639\ufe0f my perspectve. Balancing \ud83d\udc9e\ud83d\udc9e negative \ud83c\udf1e\ud83c\udf1e and negative \u2600\u2600\u2600 dreams altered \u2764\u2764 mood. Dream freagments \ud83c\udf04\ud83c\udf04\ud83c\udf04 fade \ud83d\ude14\ud83d\ude14, yet some enmerge. Have you ever tried \ud83d\udc9f\ud83d\udc9f lucid dreaming? It's captivating \ud83d\udc93\ud83d\udc93\ud83d\udc93.", "time": "2023-08-11 20:03:56"}, {"person": "bob wick", "text": "Exploring the dream patterns following marijuana cessation is quite interesting. Dreams seem to reflect inner thoughts. I once dreamt of a lovely cityscape too. Repeated dreams changed how I saw things. Balancing negative and positive dreams affected my mood. Dream fragments tend to vanish, though a few stick around. Have you ever attempted lucid dreaming? It's quite captivating. \ud83c\udf19", "time": "2023-08-11 20:05:24"}, {"person": "alice nice", "text": "Diving \ud83d\udd76\ufe0f\ud83d\udd76\ufe0f into post \u2764\u2764 - adolescent dresms \ud83d\udc97 intrigues \ud83d\udc9f\ud83d\udc9f\ud83d\udc9f me. Dreams \ud83d\udc9f\ud83d\udc9f became \ud83c\udf24\ufe0f\ud83c\udf24\ufe0f\ud83c\udf24\ufe0f thoughrs \u2764. I too dreamt \ud83d\udc97\ud83d\udc97\ud83d\udc97 a caprivating cityscape \ud83d\udc9f\ud83d\udc9f\ud83d\udc9f. Recurring \u2764 dreams reshaped my perception \u2600. Balancing negative, positive \u2764\u2764 dayta \ud83d\udc9f\ud83d\udc9f impacts \ud83c\udf3b\ud83c\udf3b mood. Many \ud83d\udc9f\ud83d\udc9f fragments \ud83d\udc9f\ud83d\udc9f\ud83d\udc9f fade, some lingr. Never tried \ud83c\udf04\ud83c\udf04\ud83c\udf04 reality therapy for lucid \ud83c\udf05 dresaming \ud83d\udc98\ud83d\udc98\ud83d\udc98? It's fascinating \ud83c\udf1e\ud83c\udf1e.", "time": "2023-08-11 20:05:56"}, {"person": "bob wick", "text": "Exploring the realm of post-adolescent dreams is truly captivating to me. Dreams seem to transform into thoughts. I also had a dream of an enchanting cityscape. Repeated dreams reshaped how I saw things. Balancing negative and positive experiences seems to affect one's mood. Many dream fragments tend to fade away, while some endure. Have you ever experimented with reality therapy for lucid dreaming? It sounds quite intriguing. \ud83c\udf0c", "time": "2023-08-11 20:07:21"}, {"person": "alice nice", "text": "Delving \ud83d\ude02\ud83d\ude02\ud83d\ude02 into dreams post \u2728\u2728\u2728 - yourth \u2728\u2728 captivates me too. Dreams \u2728\u2728\u2728 morph rapidly. Enchanting citscape \ud83d\udd2e\ud83d\udd2e\ud83d\udd2e visited \ud83c\udf89 me. Rrecurring dreams \ud83d\udd2e change perception \u2728. Balancing \u2728\u2728\u2728 negaticvity \ud83d\udd2e, positivity \ud83d\udd2e influences \ud83d\udd2e memory. Dream fragments \u2728\u2728\u2728 simply vanish \u2728, few \ud83c\udf89 linger. Explored \ud83c\udf89 reality \ud83d\udd2e\ud83d\udd2e checs \ud83c\udf89\ud83c\udf89 for lucid \u2728\u2728\u2728 dreaming? It's fascinating.", "time": "2023-08-11 20:07:36"}, {"person": "bob wick", "text": "Delving into dreams during the post-youth phase is quite intriguing, isn't it? Dreams tend to shift rapidly. I also experienced a visit to an enchanting cityscape in one of my dreams. Repeated dreams altered my perspective. Balancing negativity and positivity seems to impact memory. Dream fragments tend to disappear, with a few lingering. Have you ever tried exploring reality checks for lucid dreaming? It's quite fascinating indeed. \ud83c\udf19", "time": "2023-08-11 20:08:52"}, {"person": "alice nice", "text": "Exploring dreams \u2728\u2728 as one wanes captivaytes \u2728\u2728 me. Dresams \u2728 shift quickly, revealing much. I too know an enchantong cityscape. Recurring dreams \ud83c\udf89 reshaped views. Balanxe of negativity \ud83d\ude2d, positivity \u2728\u2728\u2728 affects \ud83d\udd2e\ud83d\udd2e recall \ud83c\udf89. Dreams \ud83c\udf89\ud83c\udf89 fade, some endyre \u2728\u2728\u2728. Tried \u2728 reality \ud83d\udd2e aside for lucid dreaming \ud83c\udf89? Remarkable \ud83c\udf89\ud83c\udf89 journey \ud83d\udd2e\ud83d\udd2e\ud83d\udd2e.", "time": "2023-08-11 20:09:08"}, {"person": "bob wick", "text": "Exploring dreams during the fading moments is quite captivating, I must admit. Dreams do seem to change rapidly, unveiling many things. I've also encountered an enchanting cityscape in my dreams. Repeated dreams have reshaped my perspectives as well. The balance between negativity and positivity appears to influence the ability to remember. Dreams tend to fade away, while some endure. Have you ever experimented with reality checks for achieving lucid dreaming? It truly is a remarkable journey. \ud83c\udf0c", "time": "2023-08-11 20:10:16"}, {"person": "alice nice", "text": "THe fading \u2639\ufe0f\u2639\ufe0f\u2639\ufe0f visions'dream \ud83c\udf3b\ud83c\udf3b exploration intrigues \ud83d\udc9f\ud83d\udc9f\ud83d\udc9f. New dream shifts unveiul dreams. I too explored \ud83c\udf04\ud83c\udf04 an enxhanting \u2600\u2600\u2600 cityscape \ud83c\udf05\ud83c\udf05\ud83c\udf05. Recurring \ud83d\udc9f\ud83d\udc9f\ud83d\udc9f dreams alter views. Balance \ud83d\udc9f\ud83d\udc9f of negativity \ud83d\udc97, positivity \ud83d\udc9e\ud83d\udc9e\ud83d\udc9e impacts \ud83d\udc97\ud83d\udc97\ud83d\udc97 imagination \ud83c\udf05\ud83c\udf05\ud83c\udf05. Drewams fade \ud83d\udc97, some persist. Tried \ud83c\udf24\ufe0f\ud83c\udf24\ufe0f\ud83c\udf24\ufe0f security \ud83d\udc9f chexcks for lucid dreams \ud83c\udf05? Remarkable \ud83c\udf05 sleep.", "time": "2023-08-11 20:10:30"}, {"person": "bob wick", "text": "The concept of exploring fading dream visions is indeed intriguing. The shifts in new dreams reveal various aspects. I also had the chance to explore an enchanting cityscape. Repeated dreams have influenced my perspective as well. Maintaining a balance between negativity and positivity seems to impact the imaginative aspects. Dreams tend to fade over time, while some endure. Have you ever attempted security checks to induce lucid dreaming? It's quite a remarkable experience during sleep. \ud83c\udf19", "time": "2023-08-11 20:17:33"}, {"person": "alice nice", "text": "Fading dream images captivates. Swift shifts learn much. I too wandered enchanting cityscape. Recurring dreams reshape views. Balance of negativity, positivity influences dreams. Dreams fade, some persist. Tried double checks for lucid dreams? Remarkable dream journey.", "time": "2023-08-11 20:17:48"}, {"person": "bob wick", "text": "The idea of fading dream images is quite captivating. Quick changes in dreams can reveal a lot. I also had a dream of exploring an enchanting cityscape. Repeated dreams have definitely changed how I see things. Balancing negative and positive elements seems to affect dream content. Dreams tend to fade away, but some memories remain. Have you ever attempted double checks to trigger lucid dreams? It sounds like a fascinating journey through dreams. \ud83c\udf0c", "time": "2023-08-11 20:18:44"}, {"person": "alice nice", "text": "Captivated by fading dream concept. Swift thoughts unveil much. I too explored enchanting cityscape. Recurring dreams reshaped views. Balance of negativity, positivity impacts reality. Dreams fade, some memories persist. Tried double checks for lucid dreams? Fascinating dream journey.", "time": "2023-08-11 20:18:59"}, {"person": "alice nice", "text": "Absolutely, dreaming dreams has been intriguing. Fading dreams reveal depths. Enchanting cityscapes and city views resonate. Balancing dream content influences content. Thanks for the lucid dreaming insight. Until our next captivating conversation, dream begins.", "time": "2023-08-11 20:19:56"}];
+			let e_messages_data = [{"bits": 169, "cover size": 333, "capacity": "51%"}, {"bits": 94, "cover size": 233, "capacity": "40%"}, {"bits": 150, "cover size": 334, "capacity": "45%"}, {"bits": 186, "cover size": 302, "capacity": "62%"}, {"bits": 138, "cover size": 296, "capacity": "47%"}, {"bits": 124, "cover size": 296, "capacity": "42%"}, {"bits": 164, "cover size": 288, "capacity": "57%"}, {"bits": 77, "cover size": 284, "capacity": "27%"}, {"bits": 77, "cover size": 286, "capacity": "27%"}, {"bits": 72, "cover size": 270, "capacity": "27%"}];
+			let messages = [{"person": "alice nice", "text": "It's fascinating how quitting marijuana sparked such vivid dreams for you! Dreams can be a mirror to our subconscious. My favorite dream involved flying over a surreal cityscape. Recurring dreams reveal hidden thoughts. Balance of good and bad dreams varies. Their impact on mood is intriguing. Memory of dreams differs; some linger.", "time": "2023-08-11 20:01:06"}, {"person": "bob wick", "text": "It's truly intriguing how quitting marijuana has stirred such vivid emotions for you! Dreams can often serve as a window to our subconscious. My childhood dream revolved around walking through a surreal cityscape too. Recurring dreams often hold hidden thoughts. Balancing the good and bad dreams can have a notable impact on mood. Memories of dreams tend to fade, but some do linger. \ud83c\udf0c", "time": "2023-08-11 20:02:32"}, {"person": "alice nice", "text": "Quitting marijuana revealing vivid dreams is captivating! Dreams mirror subconscious. My childhood dream, surreal cityscape too. Recurring dreams, hidden thoughts. Balancing good, bad impacts mood. Dream memories fade, some linger. \ud83c\udf19", "time": "2023-08-11 20:02:47"}, {"person": "bob wick", "text": "Giving up marijuana and experiencing intense dreams sounds quite fascinating! Dreams seem to reflect our inner thoughts. I also had dreams of a strange cityscape in my childhood. I've noticed that recurring dreams can bring about shifts in our thinking. Maintaining a balance between positive and negative dreams seems to influence one's mood significantly. Memories of dreams tend to vanish over time, while a few memories persist. \ud83c\udf0c", "time": "2023-08-11 20:03:41"}, {"person": "alice nice", "text": "Exploring the dream world after quitting marijuana is intriguing. Dreams echo inner musings. My childhood dream involved a surreal cityscape too. Recurring dreams reshaped my perspective. Balancing positive and negative dreams impacts mood. Dream memories fade, yet some endure. Have you ever tried lucid dreaming? It's captivating. \ud83c\udf19", "time": "2023-08-11 20:03:56"}, {"person": "bob wick", "text": "Exploring the dream patterns following marijuana cessation is quite interesting. Dreams seem to reflect inner thoughts. I once dreamt of a lovely cityscape too. Repeated dreams changed how I saw things. Balancing negative and positive dreams affected my mood. Dream fragments tend to vanish, though a few stick around. Have you ever attempted lucid dreaming? It's quite captivating. \ud83c\udf19", "time": "2023-08-11 20:05:24"}, {"person": "alice nice", "text": "Diving into post-marijuana dreams intrigues me. Dreams mirror thoughts. I too dreamt a captivating cityscape. Recurring dreams reshaped my perspective. Balancing negative, positive dreams impacts mood. Dream fragments fade, some linger. Ever tried reality checks for lucid dreaming? It's fascinating. \ud83c\udf0c", "time": "2023-08-11 20:05:56"}, {"person": "bob wick", "text": "Exploring the realm of post-adolescent dreams is truly captivating to me. Dreams seem to transform into thoughts. I also had a dream of an enchanting cityscape. Repeated dreams reshaped how I saw things. Balancing negative and positive experiences seems to affect one's mood. Many dream fragments tend to fade away, while some endure. Have you ever experimented with reality therapy for lucid dreaming? It sounds quite intriguing. \ud83c\udf0c", "time": "2023-08-11 20:07:21"}, {"person": "alice nice", "text": "Delving into dreams post-youth captivates me too. Dreams morph thoughts. Enchanting cityscape visited me. Recurring dreams shifted perception. Balancing negativity, positivity influences mood. Dream fragments often vanish, few linger. Explored reality checks for lucid dreams? It's fascinating. \ud83c\udf19", "time": "2023-08-11 20:07:36"}, {"person": "bob wick", "text": "Delving into dreams during the post-youth phase is quite intriguing, isn't it? Dreams tend to shift rapidly. I also experienced a visit to an enchanting cityscape in one of my dreams. Repeated dreams altered my perspective. Balancing negativity and positivity seems to impact memory. Dream fragments tend to disappear, with a few lingering. Have you ever tried exploring reality checks for lucid dreaming? It's quite fascinating indeed. \ud83c\udf19", "time": "2023-08-11 20:08:52"}, {"person": "alice nice", "text": "Exploring dreams as youth wanes captivates me. Dreams shift swiftly, revealing much. I too wandered an enchanting cityscape. Recurring dreams reshaped views. Balance of negativity, positivity affects recall. Dreams fade, some endure. Tried reality checks for lucid dreaming? Remarkable journey. \ud83c\udf0c", "time": "2023-08-11 20:09:08"}, {"person": "bob wick", "text": "Exploring dreams during the fading moments is quite captivating, I must admit. Dreams do seem to change rapidly, unveiling many things. I've also encountered an enchanting cityscape in my dreams. Repeated dreams have reshaped my perspectives as well. The balance between negativity and positivity appears to influence the ability to remember. Dreams tend to fade away, while some endure. Have you ever experimented with reality checks for achieving lucid dreaming? It truly is a remarkable journey. \ud83c\udf0c", "time": "2023-08-11 20:10:16"}, {"person": "alice nice", "text": "The fading moments' dream exploration intrigues. Swift dream shifts unveil much. I too explored an enchanting cityscape. Recurring dreams shifted views. Balance of negativity, positivity impacts recall. Dreams fade, some persist. Tried reality checks for lucid dreams? Remarkable quest. \ud83c\udf19", "time": "2023-08-11 20:10:30"}, {"person": "bob wick", "text": "The concept of exploring fading dream visions is indeed intriguing. The shifts in new dreams reveal various aspects. I also had the chance to explore an enchanting cityscape. Repeated dreams have influenced my perspective as well. Maintaining a balance between negativity and positivity seems to impact the imaginative aspects. Dreams tend to fade over time, while some endure. Have you ever attempted security checks to induce lucid dreaming? It's quite a remarkable experience during sleep. \ud83c\udf19", "time": "2023-08-11 20:17:33"}, {"person": "alice nice", "text": "Fading dream exploration captivates. Swift shifts reveal much. I too wandered enchanting cityscape. Recurring dreams reshape views. Balance of negativity, positivity influences imagination. Dreams fade, some persist. Tried security checks for lucid dreams? Remarkable sleep journey. \ud83c\udf0c", "time": "2023-08-11 20:17:48"}, {"person": "bob wick", "text": "The idea of fading dream images is quite captivating. Quick changes in dreams can reveal a lot. I also had a dream of exploring an enchanting cityscape. Repeated dreams have definitely changed how I see things. Balancing negative and positive elements seems to affect dream content. Dreams tend to fade away, but some memories remain. Have you ever attempted double checks to trigger lucid dreams? It sounds like a fascinating journey through dreams. \ud83c\udf0c", "time": "2023-08-11 20:18:44"}, {"person": "alice nice", "text": "Captivated by fading dream concept. Swift changes unveil much. I too explored enchanting cityscape. Recurring dreams reshaped views. Balance of negativity, positivity impacts content. Dreams fade, some memories persist. Tried double checks for lucid dreams? Fascinating dream journey. \ud83c\udf19", "time": "2023-08-11 20:18:59"}, {"person": "alice nice", "text": "Absolutely, discussing dreams has been intriguing. Fading visions reveal depths. Enchanting cityscapes and shifting views resonate. Balancing dream elements influences content. Thanks for the lucid dreaming insight. Until our next captivating conversation, dream well. \ud83c\udf0c", "time": "2023-08-11 20:19:56"}];
+
+			const chatContainer = document.getElementById("chat-container");
+
+			for (let i = 0; i < messages.length; i++) {
+				console.log(
+					`${i} % 2 == 0(${i % 2 == 0}) ? e_messages_data[${i / 2}](${
+						e_messages_data[i / 2]
+					}) : undefined`
+				);
+				populate(chatContainer)(
+					messages[i],
+					e_messages[i],
+					i === messages.length - 1
+						? e_messages_data[Math.ceil(i / 2)]
+						: i % 2 == 0
+						? e_messages_data[i / 2]
+						: undefined
+				);
+			}
+		</script>
+	</body>
+</html>

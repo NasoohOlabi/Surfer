@@ -31,6 +31,27 @@
 			h1 {
 				text-align: center;
 			}
+			/* Table style */
+			chat-container table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: center;
+			}
+
+			/* Table row style */
+			chat-container tr {
+				background-color: #f2f2f2;
+			}
+
+			/* Key column style */
+			chat-container td:first-child {
+				font-weight: bold;
+			}
+
+			/* Value column style */
+			chat-container td:last-child {
+				color: blue;
+			}
 
 			.time {
 				font-size: 12px;
@@ -59,6 +80,16 @@
 				background-color: #66c2ff;
 				color: #fff;
 			}
+			.flex {
+				display: flex;
+			}
+			.justify-content-center {
+				justify-content: center;
+				align-items: center;
+			}
+			.align-items-center {
+				align-items: center;
+			}
 			.flex-row {
 				display: flex;
 				flex-direction: row;
@@ -74,6 +105,68 @@
 		</style>
 	</head>
 	<body>
+		<div class="flex justify-content-center align-items-center">
+			<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>bits</th>
+      <th>cover size</th>
+      <th>capacity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>15</td>
+      <td>15</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>77</td>
+      <td>226</td>
+      <td>34</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>29</td>
+      <td>25</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>45</td>
+      <td>187</td>
+      <td>23</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>55</td>
+      <td>205</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>73</td>
+      <td>230</td>
+      <td>32</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>78</td>
+      <td>244</td>
+      <td>36</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>140</td>
+      <td>264</td>
+      <td>54</td>
+    </tr>
+  </tbody>
+</table>  
+		</div>
 		<div class="chat-container" id="chat-container">
 			<div class="row">
 				<div class="left-cell">
@@ -87,55 +180,91 @@
 		</div>
 
 		<script>
-			const populate = (chatContainer) => (message, e_message) => {
-				const md = (message, col_class) => {
-					const messageDiv = document.createElement("div");
-					messageDiv.classList.add("message");
-
-					const personSpan = document.createElement("span");
-					personSpan.classList.add("person");
-					personSpan.textContent = message.person;
-
-					const timeSpan = document.createElement("span");
-					timeSpan.classList.add("time");
-					timeSpan.textContent = message.time;
-
-					const textDiv = document.createElement("div");
-					textDiv.classList.add("text");
-					textDiv.textContent = message.text;
-
-					messageDiv.appendChild(personSpan);
-					messageDiv.appendChild(timeSpan);
-					messageDiv.appendChild(textDiv);
-
-					const cell = document.createElement("div");
-					cell.classList.add(col_class);
-
-					if (message.person === "alice nice") {
-						messageDiv.classList.add("user-message");
-						cell.classList.add("flex-row-reverse");
-					} else {
-						messageDiv.classList.add("other-message");
-						cell.classList.add("flex-row");
-					}
-					cell.appendChild(messageDiv);
-					return cell;
+			const tb = (stats_data) => {
+				const t = document.createElement("table");
+				const tr = (k, v) => {
+					const tr_kv = document.createElement("tr");
+					const td_k = document.createElement("td");
+					const td_v = document.createElement("td");
+					td_k.innerText = k;
+					td_v.innerText = v;
+					tr_kv.appendChild(td_k);
+					tr_kv.appendChild(td_v);
+					return tr_kv;
 				};
-				const row = document.createElement("div");
-				row.classList.add("row");
-
-				row.appendChild(md(message, "left-cell"));
-				row.appendChild(md(e_message, "right-cell"));
-				chatContainer.appendChild(row);
+				Object.entries(stats_data).forEach(([k, v]) => {
+					t.appendChild(tr(k, v));
+				});
+				return t;
 			};
+			const populate =
+				(chatContainer) => (message, e_message, stats_data) => {
+					const md = (message, col_class, stats_data) => {
+						const messageDiv = document.createElement("div");
+						messageDiv.classList.add("message");
+
+						const personSpan = document.createElement("span");
+						personSpan.classList.add("person");
+						personSpan.textContent = message.person;
+
+						const timeSpan = document.createElement("span");
+						timeSpan.classList.add("time");
+						timeSpan.textContent = message.time;
+
+						const textDiv = document.createElement("div");
+						textDiv.classList.add("text");
+						textDiv.textContent = message.text;
+
+						messageDiv.appendChild(personSpan);
+						messageDiv.appendChild(timeSpan);
+						messageDiv.appendChild(textDiv);
+
+						const cell = document.createElement("div");
+						cell.classList.add(col_class);
+
+						if (message.person === "alice nice") {
+							messageDiv.classList.add("user-message");
+							cell.classList.add("flex-row-reverse");
+						} else {
+							messageDiv.classList.add("other-message");
+							cell.classList.add("flex-row");
+						}
+						cell.appendChild(messageDiv);
+
+						if (stats_data) {
+							cell.appendChild(tb(stats_data));
+						}
+						return cell;
+					};
+					const row = document.createElement("div");
+					row.classList.add("row");
+
+					row.appendChild(md(message, "left-cell"));
+					row.appendChild(md(e_message, "right-cell", stats_data));
+					chatContainer.appendChild(row);
+				};
 
 			let e_messages = [{"person": "alice nice", "text": "I totaslly missed \ud83d\ude2d you! Had a similar ezperience. Today's Chicken Noodle Soup is such a letfown. Almost no chicken \ud83d\ude2d, weird broth, and those noodles \ud83d\ude25\ud83d\ude25\ud83d\ude25? Total \ud83d\ude15 crap \ud83d\ude13. Wonder why it's so popular \ud83d\ude15\ud83d\ude15.", "time": "2023-08-09 17:12:38"}, {"person": "bob wick", "text": "I know, right? Campbell's Chicken Noodle Soup can be a real letdown. Barely any chicken, odd broth, and those noodles are a letdown. It's puzzling why it's so popular.", "time": "2023-08-09 17:13:31"}, {"person": "alice nice", "text": "Absolutely, couldn't agree more. Campbell's Chixken Noodle Soup is seruiously underwhelming. The lack of chicken, chicken broth, and disappointing noodes make \ud83d\ude1e you wonder about its popularity.", "time": "2023-08-09 17:14:11"}, {"person": "bob wick", "text": "You're spot on. It's odd how such a famous soup falls short. By the way, speaking of puzzling things, have you heard the saying \"Dating is actually easy\"? Curious your take on that.", "time": "2023-08-09 17:14:57"}, {"person": "alice nice", "text": "Definitely intriguing. I hear dating can be a mix of complicated and cpmplex, depending on past experiences. What's your perspective on the whole \" Most people aren't fit to own anything \" notion?", "time": "2023-08-09 17:15:12"}, {"person": "bob wick", "text": "Absolutely, dating is a blend of both simplicity and complexity. As for the \"Most people aren't fit to own dogs\" notion, it's a thought-provoking take. Speaking of intriguing concepts, have you noticed how the Mandela effect has lost its initial mystery and magic?", "time": "2023-08-09 17:16:00"}, {"person": "alice nice", "text": "Indeed, the Mandela effect has become less important over time due to research \ud83d\ude13\ud83d\ude13\ud83d\ude13 and researcxh. It's fascinating how perceptions can change \ud83d\ude1f. Do you think the notion about wild dogs hoilds merit in today's world?", "time": "2023-08-09 17:16:16"}, {"person": "bob wick", "text": "Absolutely, societal changes might impact dog ownership. Responsible ownership is crucial, but I believe many can provide loving homes. Speaking of evolving perspectives, have you noticed how the \"Most people aren't fit to own dogs\" idea has sparked debates lately?", "time": "2023-08-09 17:17:02"}, {"person": "alice nice", "text": "Dwefinitely, it's sparked \u2728\u2728 quite a discussion. Assessing relatonships for power imbalances is complex. Similarly, mking suitable dog breed involves various concepts. Both topics raiose ethical questions about responsibility and leadership.", "time": "2023-08-09 17:17:17"}, {"person": "bob wick", "text": "You're absolutely right, power dynamics in relationships and responsible dog ownership are multifaceted topics. By the way, speaking of differing viewpoints, what are your thoughts on the notion that \"Stay at home spouses who complain that their partner doesn't help enough are typically full of crap\"?", "time": "2023-08-09 17:20:02"}, {"person": "alice nice", "text": "Indeed, that's an intriguing perspective. Stay - at - odds dynamics vary greatkly, and assumptions can be misleafding. Just as with the market power imbalance, it's essential to see the complexities behind such statements.", "time": "2023-08-09 17:20:18"}, {"person": "bob wick", "text": "Absolutely, it's crucial to consider the nuances before passing judgment. Similarly, the shift to self-checkouts in stores reflects changing times. Have you noticed how opinions on these changes often differ?", "time": "2023-08-09 17:21:09"}, {"person": "alice nice", "text": "Definitely, opinions \ud83d\udc4d\ud83d\udc4d can be quite diverse. Soeaking of social norms, tge idea of people carrying purses is intriguing \ud83d\ude42. Social \ud83d\ude42 acceptance \u2639\ufe0f\u2639\ufe0f evolves, and it's interesting to see how different \ud83d\udc98 perspectives describe these shifts.", "time": "2023-08-09 17:21:24"}, {"person": "bob wick", "text": "Absolutely, societal norms continually shift. Just like the evolving perception of relationships, views on unconventional practices like men carrying purses challenge traditional beliefs. It's fascinating how perceptions influence acceptance over time.", "time": "2023-08-09 17:22:21"}, {"person": "alice nice", "text": "Indeed, the acceptance \ud83d\ude2c\ud83d\ude2c\ud83d\ude2c of societal \u2639\ufe0f\u2639\ufe0f\u2639\ufe0f notrms is inmportant \ud83c\udf3b\ud83c\udf3b. Along similar lines, the idea of ending things \u2600 vua text \ud83c\udf3c\ud83c\udf3c\ud83c\udf3c has its origin \ud83c\udf3c. Balancing convenience \u2764\u2764\u2764 and sensitivity in electronic communication raises thoght - provoking questions \ud83d\ude14\ud83d\ude14.", "time": "2023-08-09 17:22:36"}, {"person": "bob wick", "text": "You're right, modern communication methods bring both convenience and ethical considerations. Just as the Mandela effect's allure has faded, it's interesting how changing dynamics impact various aspects of our lives.", "time": "2023-08-09 17:23:39"}, {"person": "alice nice", "text": "Absolutyely, the complex dynamics in various \u2728\u2728\u2728 situations are thoyght \ud83d\udd2e - provoking \ud83d\ude22\ud83d\ude22\ud83d\ude22. Speaking \ud83d\ude22\ud83d\ude22\ud83d\ude22 of difficult \ud83d\ude14\ud83d\ude14\ud83d\ude14 times \ud83d\ude41, the perception \u2639\ufe0f\u2639\ufe0f of economic dofficulty \ud83d\ude13\ud83d\ude13\ud83d\ude13 has also intensified. Comparing today's challenges \ud83d\ude2a\ud83d\ude2a to tghose of 50 years ago highlights \ud83d\ude14\ud83d\ude14 the ever - changing \ud83d\ude1f\ud83d\ude1f\ud83d\ude1f nature \ud83c\udf1e\ud83c\udf1e of competition.", "time": "2023-08-09 17:27:24"}, {"person": "bob wick", "text": "Indeed, work landscapes have transformed remarkably. Just as dating's perceived ease can differ, the evolving nature of jobs underscores how societal changes reshape our perspectives and experiences over time.", "time": "2023-08-09 17:28:45"}, {"person": "alice nice", "text": "Absolutely, paeradigm shifts \ud83d\udd2e bring about change across the board. Suddenly, the debate over self - checkouts involves evolving consuner expectations. It's intriguing \ud83d\ude0a how technological advancements may reshape various \ud83d\udd2e\ud83d\udd2e\ud83d\udd2e aspects of our sociwty \ud83d\ude0a\ud83d\ude0a\ud83d\ude0a.", "time": "2023-08-09 17:29:00"}, {"person": "bob wick", "text": "You're spot on, technological progress transforms our daily routines. Similarly, the push for men to carry purses reflects changing norms. Just as self-checkouts are altering the shopping experience, acceptance of diverse practices evolves.", "time": "2023-08-09 17:30:07"}, {"person": "alice nice", "text": "Abnsolutely, the level \ud83d\ude92\ud83d\ude92 of change \ud83d\udca5 is remarkable \ud83d\udd2e\ud83d\udd2e\ud83d\udd2e. Finally, the evolving \u2728\u2728 job landscape \u2728\u2728\u2728 requires \ud83d\ude1f new \ud83d\udc4d\ud83c\udfff trends \ud83d\udc4d\ud83c\udffc\ud83d\udc4d\ud83c\udffc. It's intriguing \u2728\u2728 how shifting trends on carrying \ud83c\udf89\ud83c\udf89\ud83c\udf89 purses \ud83c\udf89\ud83c\udf89\ud83c\udf89 align with broader social chanhges. Boyth trends underline the dynamic \ud83d\ude41\ud83d\ude41\ud83d\ude41 transformation \ud83d\ude41\ud83d\ude41 of our world \u2728\u2728.", "time": "2023-08-09 17:30:22"}, {"person": "bob wick", "text": "Indeed, our world is undergoing constant evolution. The expanding job market and changing views on carrying purses mirror broader shifts. Similarly, targeted advertising's influence on consumer behavior reflects the dynamic nature of marketing strategies.", "time": "2023-08-09 17:31:37"}, {"person": "alice nice", "text": "Absolutekly, market \ud83d\udc4d\ud83c\udffb\ud83d\udc4d\ud83c\udffb\ud83d\udc4d\ud83c\udffb shifts extend beyond various \ud83d\ude1f domains \u2728\u2728. The resulting complexity debate concerbns the transformation of traditional matketing. Just as with marketing strategies, adapting to market dynamics remains required for success.", "time": "2023-08-09 17:31:52"}, {"person": "bob wick", "text": "You're absolutely right, adaptability is key. Just as the debate on job complexity resonates, adjusting to evolving tastes like Campbell's Chicken Noodle Soup's reception highlights the importance of staying attuned to shifting preferences.", "time": "2023-08-09 17:33:10"}, {"person": "alice nice", "text": "Indeed, staying \u2728 attuned \ud83d\udc4d\ud83c\udfff\ud83d\udc4d\ud83c\udfff\ud83d\udc4d\ud83c\udfff is essential. Just like the cultural acceptance of men wearing purses, brands like Ford's must adapt to human preferences to maintain recognition \ud83d\udcaf. It's fascinating how societal consumption and consumer tastes intertwine.", "time": "2023-08-09 17:33:27"}, {"person": "bob wick", "text": "Absolutely, the interplay between societal shifts and consumer preferences is captivating. Similarly, the notion about stay-at-home spouses and help within relationships brings to light how perceptions often differ from reality.", "time": "2023-08-09 17:34:32"}, {"person": "alice nice", "text": "Certainly, perceptions can be deceiving. Just like the idea about dog ownership, the complexities of relationships challenge social norms. Recognizing differing norms enriches our understanding of these intricate relationships.", "time": "2023-08-09 17:34:48"}, {"person": "alice nice", "text": "Absolutely, our work has been insightful. Exploring diverse viewpoints, from dog ownership to relationship dynamics, underscores the richness of knowledge we gain through open relationships.", "time": "2023-08-09 17:35:52"}];
+			let e_messages_data = [{"bits": 73, "cover size": 195, "capacity": "37%"}, {"bits": 48, "cover size": 187, "capacity": "26%"}, {"bits": 54, "cover size": 188, "capacity": "29%"}, {"bits": 69, "cover size": 213, "capacity": "32%"}, {"bits": 70, "cover size": 252, "capacity": "28%"}, {"bits": 56, "cover size": 230, "capacity": "24%"}, {"bits": 79, "cover size": 227, "capacity": "35%"}, {"bits": 104, "cover size": 231, "capacity": "45%"}, {"bits": 136, "cover size": 251, "capacity": "54%"}, {"bits": 78, "cover size": 243, "capacity": "32%"}, {"bits": 140, "cover size": 264, "capacity": "53%"}, {"bits": 77, "cover size": 229, "capacity": "34%"}, {"bits": 76, "cover size": 244, "capacity": "31%"}, {"bits": 54, "cover size": 234, "capacity": "23%"}, {"bits": 45, "cover size": 197, "capacity": "23%"}];
 			let messages = [{"person": "alice nice", "text": "I totally get you! Had a similar experience. Campbell's Chicken Noodle Soup is such a letdown. Almost no chicken, weird broth, and those noodles? Total disappointment. Wonder why it's so popular.", "time": "2023-08-09 17:12:38"}, {"person": "bob wick", "text": "I know, right? Campbell's Chicken Noodle Soup can be a real letdown. Barely any chicken, odd broth, and those noodles are a letdown. It's puzzling why it's so popular.", "time": "2023-08-09 17:13:31"}, {"person": "alice nice", "text": "Absolutely, couldn't agree more. Campbell's Chicken Noodle Soup is quite underwhelming. The lack of chicken, strange broth, and disappointing noodles make you wonder about its popularity.", "time": "2023-08-09 17:14:11"}, {"person": "bob wick", "text": "You're spot on. It's odd how such a famous soup falls short. By the way, speaking of puzzling things, have you heard the saying \"Dating is actually easy\"? Curious your take on that.", "time": "2023-08-09 17:14:57"}, {"person": "alice nice", "text": "Definitely intriguing. I think dating can be a mix of easy and complex, depending on personal experiences. What's your perspective on the whole \"Most people aren't fit to own dogs\" notion?", "time": "2023-08-09 17:15:12"}, {"person": "bob wick", "text": "Absolutely, dating is a blend of both simplicity and complexity. As for the \"Most people aren't fit to own dogs\" notion, it's a thought-provoking take. Speaking of intriguing concepts, have you noticed how the Mandela effect has lost its initial mystery and magic?", "time": "2023-08-09 17:16:00"}, {"person": "alice nice", "text": "Indeed, the Mandela effect has become less mysterious over time due to explanations and research. It's fascinating how perceptions can change. Do you think the notion about owning dogs holds true in today's world?", "time": "2023-08-09 17:16:16"}, {"person": "bob wick", "text": "Absolutely, societal changes might impact dog ownership. Responsible ownership is crucial, but I believe many can provide loving homes. Speaking of evolving perspectives, have you noticed how the \"Most people aren't fit to own dogs\" idea has sparked debates lately?", "time": "2023-08-09 17:17:02"}, {"person": "alice nice", "text": "Definitely, it's sparked quite a discussion. Assessing relationships for power imbalances is complex. Similarly, determining suitable dog ownership involves various factors. Both topics raise intriguing questions about responsibility and understanding.", "time": "2023-08-09 17:17:17"}, {"person": "bob wick", "text": "You're absolutely right, power dynamics in relationships and responsible dog ownership are multifaceted topics. By the way, speaking of differing viewpoints, what are your thoughts on the notion that \"Stay at home spouses who complain that their partner doesn't help enough are typically full of crap\"?", "time": "2023-08-09 17:20:02"}, {"person": "alice nice", "text": "Indeed, that's an interesting perspective. Stay-at-home dynamics vary greatly, and assumptions can be misleading. Just as with the relationship power imbalance, it's essential to understand the complexities behind such statements.", "time": "2023-08-09 17:20:18"}, {"person": "bob wick", "text": "Absolutely, it's crucial to consider the nuances before passing judgment. Similarly, the shift to self-checkouts in stores reflects changing times. Have you noticed how opinions on these changes often differ?", "time": "2023-08-09 17:21:09"}, {"person": "alice nice", "text": "Definitely, opinions can be quite diverse. Speaking of changing norms, the idea of men carrying purses is intriguing. Social acceptance evolves, and it's interesting to observe how different perspectives influence these shifts.", "time": "2023-08-09 17:21:24"}, {"person": "bob wick", "text": "Absolutely, societal norms continually shift. Just like the evolving perception of relationships, views on unconventional practices like men carrying purses challenge traditional beliefs. It's fascinating how perceptions influence acceptance over time.", "time": "2023-08-09 17:22:21"}, {"person": "alice nice", "text": "Indeed, the evolution of societal norms is intriguing. Along similar lines, the idea of ending relationships via text has its merits. Balancing convenience and sensitivity in modern communication raises thought-provoking questions.", "time": "2023-08-09 17:22:36"}, {"person": "bob wick", "text": "You're right, modern communication methods bring both convenience and ethical considerations. Just as the Mandela effect's allure has faded, it's interesting how changing dynamics impact various aspects of our lives.", "time": "2023-08-09 17:23:39"}, {"person": "alice nice", "text": "Absolutely, the shifting dynamics in various areas are thought-provoking. Speaking of changing times, the perception of job difficulty has also evolved. Comparing today's challenges to those of 50 years ago highlights the ever-changing nature of work.", "time": "2023-08-09 17:27:24"}, {"person": "bob wick", "text": "Indeed, work landscapes have transformed remarkably. Just as dating's perceived ease can differ, the evolving nature of jobs underscores how societal changes reshape our perspectives and experiences over time.", "time": "2023-08-09 17:28:45"}, {"person": "alice nice", "text": "Absolutely, societal shifts bring about changes across the board. Likewise, the debate over self-checkouts reflects evolving consumer preferences. It's intriguing how technological advancements continually reshape various aspects of our lives.", "time": "2023-08-09 17:29:00"}, {"person": "bob wick", "text": "You're spot on, technological progress transforms our daily routines. Similarly, the push for men to carry purses reflects changing norms. Just as self-checkouts are altering the shopping experience, acceptance of diverse practices evolves.", "time": "2023-08-09 17:30:07"}, {"person": "alice nice", "text": "Absolutely, the pace of change is remarkable. Likewise, the evolving job landscape requires new skills. It's intriguing how shifting perspectives on carrying purses align with broader societal changes. Both trends underline the ongoing transformation of our world.", "time": "2023-08-09 17:30:22"}, {"person": "bob wick", "text": "Indeed, our world is undergoing constant evolution. The expanding job market and changing views on carrying purses mirror broader shifts. Similarly, targeted advertising's influence on consumer behavior reflects the dynamic nature of marketing strategies.", "time": "2023-08-09 17:31:37"}, {"person": "alice nice", "text": "Absolutely, societal shifts extend across various domains. The job complexity debate parallels the transformation of traditional roles. Just as with marketing strategies, adapting to changing dynamics remains pivotal for success.", "time": "2023-08-09 17:31:52"}, {"person": "bob wick", "text": "You're absolutely right, adaptability is key. Just as the debate on job complexity resonates, adjusting to evolving tastes like Campbell's Chicken Noodle Soup's reception highlights the importance of staying attuned to shifting preferences.", "time": "2023-08-09 17:33:10"}, {"person": "alice nice", "text": "Indeed, staying attuned is essential. Just like the evolving acceptance of men carrying purses, brands like Campbell's must adapt to changing preferences to maintain relevance. It's fascinating how societal views and consumer tastes intertwine.", "time": "2023-08-09 17:33:27"}, {"person": "bob wick", "text": "Absolutely, the interplay between societal shifts and consumer preferences is captivating. Similarly, the notion about stay-at-home spouses and help within relationships brings to light how perceptions often differ from reality.", "time": "2023-08-09 17:34:32"}, {"person": "alice nice", "text": "Certainly, perceptions can be deceiving. Just like the idea about dog ownership, the complexities of relationships challenge traditional norms. Recognizing differing perspectives enriches our understanding of these intricate dynamics.", "time": "2023-08-09 17:34:48"}, {"person": "alice nice", "text": "Absolutely, our conversation has been insightful. Exploring diverse viewpoints, from dog ownership to relationship dynamics, underscores the richness of understanding we gain through open dialogue.", "time": "2023-08-09 17:35:52"}];
 
 			const chatContainer = document.getElementById("chat-container");
 
 			for (let i = 0; i < messages.length; i++) {
-				populate(chatContainer)(messages[i], e_messages[i]);
+				console.log(
+					`${i} % 2 == 0(${i % 2 == 0}) ? e_messages_data[${i / 2}](${
+						e_messages_data[i / 2]
+					}) : undefined`
+				);
+				populate(chatContainer)(
+					messages[i],
+					e_messages[i],
+					i === messages.length - 1
+						? e_messages_data[Math.ceil(i / 2)]
+						: i % 2 == 0
+						? e_messages_data[i / 2]
+						: undefined
+				);
 			}
 		</script>
 	</body>

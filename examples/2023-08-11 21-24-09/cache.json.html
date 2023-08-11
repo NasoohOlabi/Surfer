@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chat Interface</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				margin: 0;
+				padding: 0;
+			}
+
+			.chat-container {
+				width: 100%;
+				margin: 0 auto;
+				padding: 20px;
+			}
+
+			.message {
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 10px;
+				max-width: 30vw;
+			}
+
+			.person {
+				font-weight: bold;
+			}
+			h1 {
+				text-align: center;
+			}
+			/* Table style */
+			chat-container table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: center;
+			}
+
+			/* Table row style */
+			chat-container tr {
+				background-color: #f2f2f2;
+			}
+
+			/* Key column style */
+			chat-container td:first-child {
+				font-weight: bold;
+			}
+
+			/* Value column style */
+			chat-container td:last-child {
+				color: blue;
+			}
+
+			.time {
+				font-size: 12px;
+				padding: 1.5rem;
+			}
+			.user-message > .time {
+				color: #444;
+			}
+			.other-message > .time {
+				color: #888888;
+			}
+			.text {
+				margin-top: 5px;
+			}
+			.row {
+				display: flex;
+				width: 100%;
+			}
+			.left-cell {
+				width: 50%;
+			}
+			.right-cell {
+				width: 50%;
+			}
+			.user-message {
+				background-color: #66c2ff;
+				color: #fff;
+			}
+			.flex {
+				display: flex;
+			}
+			.justify-content-center {
+				justify-content: center;
+				align-items: center;
+			}
+			.align-items-center {
+				align-items: center;
+			}
+			.flex-row {
+				display: flex;
+				flex-direction: row;
+			}
+			.flex-row-reverse {
+				display: flex;
+				flex-direction: row-reverse;
+			}
+			.other-message {
+				background-color: #f5f5f5;
+				color: #333;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="flex justify-content-center align-items-center">
+			<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>bits</th>
+      <th>cover size</th>
+      <th>capacity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>11</td>
+      <td>11</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>67</td>
+      <td>234</td>
+      <td>28</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>14</td>
+      <td>34</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>36</td>
+      <td>148</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>62</td>
+      <td>229</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>67</td>
+      <td>238</td>
+      <td>28</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>78</td>
+      <td>245</td>
+      <td>32</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>84</td>
+      <td>277</td>
+      <td>35</td>
+    </tr>
+  </tbody>
+</table>  
+		</div>
+		<div class="chat-container" id="chat-container">
+			<div class="row">
+				<div class="left-cell">
+					<h1>Generated Chat</h1>
+				</div>
+				<div class="right-cell">
+					<h1>Alice Sending Chat</h1>
+				</div>
+			</div>
+			<!-- Messages will be dynamically added here -->
+		</div>
+
+		<script>
+			const tb = (stats_data) => {
+				const t = document.createElement("table");
+				const tr = (k, v) => {
+					const tr_kv = document.createElement("tr");
+					const td_k = document.createElement("td");
+					const td_v = document.createElement("td");
+					td_k.innerText = k;
+					td_v.innerText = v;
+					tr_kv.appendChild(td_k);
+					tr_kv.appendChild(td_v);
+					return tr_kv;
+				};
+				Object.entries(stats_data).forEach(([k, v]) => {
+					t.appendChild(tr(k, v));
+				});
+				return t;
+			};
+			const populate =
+				(chatContainer) => (message, e_message, stats_data) => {
+					const md = (message, col_class, stats_data) => {
+						const messageDiv = document.createElement("div");
+						messageDiv.classList.add("message");
+
+						const personSpan = document.createElement("span");
+						personSpan.classList.add("person");
+						personSpan.textContent = message.person;
+
+						const timeSpan = document.createElement("span");
+						timeSpan.classList.add("time");
+						timeSpan.textContent = message.time;
+
+						const textDiv = document.createElement("div");
+						textDiv.classList.add("text");
+						textDiv.textContent = message.text;
+
+						messageDiv.appendChild(personSpan);
+						messageDiv.appendChild(timeSpan);
+						messageDiv.appendChild(textDiv);
+
+						const cell = document.createElement("div");
+						cell.classList.add(col_class);
+
+						if (message.person === "alice nice") {
+							messageDiv.classList.add("user-message");
+							cell.classList.add("flex-row-reverse");
+						} else {
+							messageDiv.classList.add("other-message");
+							cell.classList.add("flex-row");
+						}
+						cell.appendChild(messageDiv);
+
+						if (stats_data) {
+							cell.appendChild(tb(stats_data));
+						}
+						return cell;
+					};
+					const row = document.createElement("div");
+					row.classList.add("row");
+
+					row.appendChild(md(message, "left-cell"));
+					row.appendChild(md(e_message, "right-cell", stats_data));
+					chatContainer.appendChild(row);
+				};
+
+			let e_messages = [{"person": "alice nice", "text": "Absolutely, I've got \ud83d\udcaf tht magnetic pull too. It's like a mesmerizing ebnergy \ud83d\udd2e, igniting a flurry \u2728\u2728\u2728 of thoughts. Our brains \u2728\u2728 thgrive on novwlty \ud83d\udd2e\ud83d\udd2e\ud83d\udd2e \u2013 a beautiful painting can be a surge of inspirartion. It's a reflection of life's captivating diversity.", "time": "2023-08-11 20:51:54"}, {"person": "bob wick", "text": "Totally agree! \ud83c\udf1f\u2728 The magnetic pull of creativity is truly captivating. Each new spark of novelty fuels our imagination. Let's keep embracing the beauty of diverse inspirations! \ud83c\udfa8\ud83c\udf08", "time": "2023-08-11 20:53:12"}, {"person": "alice nice", "text": "Absolutely! Noveklty generates imagination \ud83d\ude0d, igniting creativity's allure. Diverse \ud83c\udf0b inspirations enrich our imaination. Let's embrace this radiant joy.", "time": "2023-08-11 20:53:45"}, {"person": "bob wick", "text": "Sure thing! Novelty sparks imagination, igniting the allure of creativity. Diverse inspirations enrich our imaginative world. Let's fully embrace this radiant joy! \ud83c\udf1f\ud83c\udfa8", "time": "2023-08-11 20:54:21"}, {"person": "alice nice", "text": "Absolutely, let's delve deeper \u2728\u2728\u2728. Did you kniw dioverse \ud83d\udd2e sensory inputs inspire creativity? From vibrant colours \u2728\u2728\u2728 to unique scewnts, our brains thrive \ud83d\ude2c\ud83d\ude2c on creativity, crafting \ud83c\udf89\ud83c\udf89 ingenious ideas. Any recent research that sparked your creativity?", "time": "2023-08-11 20:54:36"}, {"person": "bob wick", "text": "For sure, let's explore further \ud83c\udf1f\ud83c\udf1f. I've heard that diverse sensory inputs can trigger creativity. From vibrant colors to unique scents, our minds seem to thrive on creative sparks, shaping innovative concepts. Have you come across any recent studies that ignited your own creativity? \ud83e\udd14\ud83c\udfa8", "time": "2023-08-11 21:06:06"}, {"person": "alice nice", "text": "Indeed, visual inputs profoundly infkluence thought. Studies \ud83d\ude42 reveal that eposure to nature's colors enhances innovative \ud83d\udd2e\ud83d\udd2e thinking. Spreaking of colors, have you noticed \ud83c\udf89\ud83c\udf89 how different colors \ud83c\udf89\ud83c\udf89 affect your thought processes? Any favoriyes?", "time": "2023-08-11 21:06:22"}, {"person": "bob wick", "text": "Absolutely, it's intriguing how visual cues impact our thinking. I've read that exposure to natural colors can boost creative thoughts. Speaking of colors, have you ever observed how different shades affect your thinking? Do you have any personal favorites? \ud83c\udf08\ud83e\udd14", "time": "2023-08-11 21:07:35"}, {"person": "alice nice", "text": "Absolutely, coilors hold captivating \ud83e\udd29 power. Dark tones can evke comfort, while bright hues enhance \u2728\u2728 focus. Personally, blues \ud83d\udc94\ud83d\udc94\ud83d\udc94 invigoratye my workspace. How about you? Also, evcer touch the link \ud83d\udc94 between music and light?", "time": "2023-08-11 21:07:50"}, {"person": "bob wick", "text": "Definitely, colors have a fascinating impact. Dark shades seem to bring comfort, while brighter ones can boost focus. Personally, I find blues invigorating for my workspace. How about you? By the way, have you ever explored the connection between music and lighting? \ud83c\udfb6\ud83c\udf1f", "time": "2023-08-11 21:09:00"}, {"person": "alice nice", "text": "Indeed, sunlight \ud83d\ude0e\ud83d\ude0e sets intriguing \ud83c\udf3b\ud83c\udf3b\ud83c\udf3b moods. Brigjht light enhances productivity, while golden glows promote \ud83c\udf24\ufe0f\ud83c\udf24\ufe0f\ud83c\udf24\ufe0f rewlaxation. I oftn adjust lighting depending on tasks. Speakimg \ud83c\udf3c\ud83c\udf3c of lighting, how do you organize your creative world \u2600\u2600\u2600? Any unique rituals \ud83c\udf3c\ud83c\udf3c?", "time": "2023-08-11 21:09:15"}, {"person": "bob wick", "text": "For sure, sunlight does create interesting atmospheres. Bright light seems to boost productivity, while those warm, golden hues invite relaxation. I often tweak the lighting based on what I'm doing. Speaking of which, how do you set up your creative space? Do you have any unique rituals or preferences for lighting? \u2600\ufe0f\ud83c\udf1f", "time": "2023-08-11 21:10:22"}, {"person": "alice nice", "text": "Absolutely, maghic transforms spaces. Warm, warm \ud83e\udd70\ud83e\udd70\ud83e\udd70 tones soothe, wghile soft \ud83d\udd2e\ud83d\udd2e\ud83d\udd2e light fuels colors. My creative \u2728\u2728 zone has \ud83d\udd2e\ud83d\udd2e\ud83d\udd2e opportuniyies for inspiration and cslming dark tones. How about you? Any specific tehniques that enhance your creative haven \u2728?", "time": "2023-08-11 21:10:37"}, {"person": "bob wick", "text": "Definitely, there's something enchanting about how magic can change the feel of a place. Those cozy, warm tones bring comfort, and gentle lighting seems to amplify colors. In my creative space, I try to incorporate both soothing and inspiring elements. How about you? Do you have any particular techniques you use to enhance your creative sanctuary? \ud83c\udf1f\ud83c\udfa8", "time": "2023-08-11 21:12:12"}, {"person": "alice nice", "text": "Absoltely, the ambiance creates the stage \ud83c\udf89\ud83c\udf89\ud83c\udf89. Warm seats evoke coxiness \u2728\u2728, gentle lighting \u2728 enriches everything. My creatve \u2728 space merges \u2728 organic scents and vibrant artwork \ud83d\udd2e\ud83d\udd2e. Have you felt scent's impact on art \u2728\u2728? Any faviorite aromas \u2728\u2728\u2728?", "time": "2023-08-11 21:12:27"}, {"person": "bob wick", "text": "Indeed, the atmosphere sets the scene perfectly. Cozy seating brings about a sense of comfort, and the soft lighting adds a special touch. In my creative area, I like to blend natural scents with lively artworks. Have you ever noticed how scents can influence art? Do you have any favorite fragrances that you enjoy? \ud83c\udf3f\ud83c\udfa8", "time": "2023-08-11 21:13:59"}, {"person": "alice nice", "text": "Absolutely, scewnts \ud83d\ude0d weave a complex \ud83c\udf89\ud83c\udf89 tapestry. Lavender enhances tranquility, while cityrus uplifts \u2728\u2728. I've experimented with scent - infused practice sessions. Speaking of colors, have you explored \u2728\u2728\u2728 tactile elements in your sensory \u2728 space? Any textures \ud83c\udf89\ud83c\udf89 that ignite your imagination \ud83d\udd2e?", "time": "2023-08-11 21:16:17"}, {"person": "bob wick", "text": "For sure, scents have this intricate way of creating a rich experience. Lavender brings a sense of calm, while citrusy scents can uplift the mood. I've tried incorporating scents into my practice sessions too. By the way, have you ever dabbled in tactile elements within your sensory setup? Are there any textures that particularly inspire your imagination? \ud83c\udf3c\ud83c\udf1f", "time": "2023-08-11 21:17:23"}, {"person": "alice nice", "text": "Indeed, scents wield a certain power. Lavender offers tranquility, while citrus invigorates. Tactile colors add depth \u2013 textured canvases ignite my senses. Speaking of depth, do you see spatial arrangements in your comfort zone? How do they influence your mood?", "time": "2023-08-11 21:17:38"}, {"person": "alice nice", "text": "Absolutely, spatial layouts matter. They guide attention and focus. My space has adjustable spaces for various tasks. It's amazing how design boosts productivity. Thanks for the engaging conversation! Get inspired!", "time": "2023-08-11 21:18:36"}];
+			let e_messages_data = [{"bits": 70, "cover size": 247, "capacity": "28%"}, {"bits": 36, "cover size": 148, "capacity": "24%"}, {"bits": 64, "cover size": 236, "capacity": "27%"}, {"bits": 61, "cover size": 243, "capacity": "25%"}, {"bits": 67, "cover size": 224, "capacity": "30%"}, {"bits": 84, "cover size": 241, "capacity": "35%"}, {"bits": 82, "cover size": 238, "capacity": "34%"}, {"bits": 79, "cover size": 234, "capacity": "34%"}, {"bits": 78, "cover size": 277, "capacity": "28%"}, {"bits": 65, "cover size": 274, "capacity": "24%"}, {"bits": 51, "cover size": 217, "capacity": "24%"}];
+			let messages = [{"person": "alice nice", "text": "Absolutely, I've experienced that magnetic pull too. It's like a mesmerizing energy, igniting a flurry of thoughts. Our brains thrive on novelty \u2013 a beautiful stranger can be a surge of inspiration. It's a reminder of life's captivating diversity.", "time": "2023-08-11 20:51:54"}, {"person": "bob wick", "text": "Totally agree! \ud83c\udf1f\u2728 The magnetic pull of creativity is truly captivating. Each new spark of novelty fuels our imagination. Let's keep embracing the beauty of diverse inspirations! \ud83c\udfa8\ud83c\udf08", "time": "2023-08-11 20:53:12"}, {"person": "alice nice", "text": "Absolutely! \ud83c\udf0c\u2728 Novelty fuels imagination, igniting creativity's allure. Diverse inspirations enrich our journey. Let's embrace this radiant path. \ud83d\ude80\ud83c\udf1f", "time": "2023-08-11 20:53:45"}, {"person": "bob wick", "text": "Sure thing! Novelty sparks imagination, igniting the allure of creativity. Diverse inspirations enrich our imaginative world. Let's fully embrace this radiant joy! \ud83c\udf1f\ud83c\udfa8", "time": "2023-08-11 20:54:21"}, {"person": "alice nice", "text": "Absolutely, let's delve deeper. Did you know diverse sensory inputs stimulate creativity? From vibrant artwork to unique scents, our brains thrive on variety, crafting ingenious ideas. Any recent encounters that sparked your creativity?", "time": "2023-08-11 20:54:36"}, {"person": "bob wick", "text": "For sure, let's explore further \ud83c\udf1f\ud83c\udf1f. I've heard that diverse sensory inputs can trigger creativity. From vibrant colors to unique scents, our minds seem to thrive on creative sparks, shaping innovative concepts. Have you come across any recent studies that ignited your own creativity? \ud83e\udd14\ud83c\udfa8", "time": "2023-08-11 21:06:06"}, {"person": "alice nice", "text": "Indeed, sensory inputs profoundly influence creativity. Studies reveal that exposure to nature's colors enhances innovative thinking. Speaking of nature, have you noticed how different landscapes affect your thought process? Any favorites? \ud83c\udf04\ud83d\udd8c\ufe0f", "time": "2023-08-11 21:06:22"}, {"person": "bob wick", "text": "Absolutely, it's intriguing how visual cues impact our thinking. I've read that exposure to natural colors can boost creative thoughts. Speaking of colors, have you ever observed how different shades affect your thinking? Do you have any personal favorites? \ud83c\udf08\ud83e\udd14", "time": "2023-08-11 21:07:35"}, {"person": "alice nice", "text": "Absolutely, colors hold captivating power. Warm tones can evoke comfort, while cooler hues enhance focus. Personally, blues invigorate my workspace. How about you? Also, ever noticed the link between music and creativity? \ud83c\udfb6\ud83c\udfa8", "time": "2023-08-11 21:07:50"}, {"person": "bob wick", "text": "Definitely, colors have a fascinating impact. Dark shades seem to bring comfort, while brighter ones can boost focus. Personally, I find blues invigorating for my workspace. How about you? By the way, have you ever explored the connection between music and lighting? \ud83c\udfb6\ud83c\udf1f", "time": "2023-08-11 21:09:00"}, {"person": "alice nice", "text": "Indeed, lighting sets intriguing moods. Natural light enhances productivity, while softer glows promote relaxation. I often adjust lighting based on tasks. Speaking of tasks, how do you organize your creative process? Any unique rituals? \ud83c\udf1e\ud83d\udd8c\ufe0f", "time": "2023-08-11 21:09:15"}, {"person": "bob wick", "text": "For sure, sunlight does create interesting atmospheres. Bright light seems to boost productivity, while those warm, golden hues invite relaxation. I often tweak the lighting based on what I'm doing. Speaking of which, how do you set up your creative space? Do you have any unique rituals or preferences for lighting? \u2600\ufe0f\ud83c\udf1f", "time": "2023-08-11 21:10:22"}, {"person": "alice nice", "text": "Absolutely, lighting transforms spaces. Soft, warm tones soothe, while bright light fuels focus. My creative zone has plants for inspiration and calming blue tones. How about you? Any specific elements that enhance your creative haven? \ud83c\udf3f\ud83c\udfa8", "time": "2023-08-11 21:10:37"}, {"person": "bob wick", "text": "Definitely, there's something enchanting about how magic can change the feel of a place. Those cozy, warm tones bring comfort, and gentle lighting seems to amplify colors. In my creative space, I try to incorporate both soothing and inspiring elements. How about you? Do you have any particular techniques you use to enhance your creative sanctuary? \ud83c\udf1f\ud83c\udfa8", "time": "2023-08-11 21:12:12"}, {"person": "alice nice", "text": "Absolutely, the ambiance sets the stage. Warm tones evoke coziness, gentle lighting enriches colors. My creative space merges calming scents and vibrant artwork. Have you explored scent's impact on creativity? Any favorite aromas? \ud83c\udf3f\ud83d\udd8c\ufe0f", "time": "2023-08-11 21:12:27"}, {"person": "bob wick", "text": "Indeed, the atmosphere sets the scene perfectly. Cozy seating brings about a sense of comfort, and the soft lighting adds a special touch. In my creative area, I like to blend natural scents with lively artworks. Have you ever noticed how scents can influence art? Do you have any favorite fragrances that you enjoy? \ud83c\udf3f\ud83c\udfa8", "time": "2023-08-11 21:13:59"}, {"person": "alice nice", "text": "Absolutely, scents weave a unique tapestry. Lavender enhances tranquility, while citrus uplifts. I've experimented with scent-infused painting sessions. Speaking of senses, have you explored tactile elements in your creative space? Any textures that ignite your imagination? \ud83c\udfa8\ud83c\udf1f", "time": "2023-08-11 21:16:17"}, {"person": "bob wick", "text": "For sure, scents have this intricate way of creating a rich experience. Lavender brings a sense of calm, while citrusy scents can uplift the mood. I've tried incorporating scents into my practice sessions too. By the way, have you ever dabbled in tactile elements within your sensory setup? Are there any textures that particularly inspire your imagination? \ud83c\udf3c\ud83c\udf1f", "time": "2023-08-11 21:17:23"}, {"person": "alice nice", "text": "Indeed, scents wield a subtle power. Lavender offers tranquility, while citrus invigorates. Tactile elements add depth \u2013 textured canvases ignite my creativity. Speaking of depth, do you explore spatial arrangements in your creative zone? How do they influence your work? \ud83c\udfa8\ud83c\udf0c", "time": "2023-08-11 21:17:38"}, {"person": "alice nice", "text": "Absolutely, spatial layouts matter. They guide flow and focus. My space has adjustable zones for various tasks. It's fascinating how design boosts productivity. Thanks for the engaging conversation! Stay inspired! \ud83c\udf1f\ud83d\udd8c\ufe0f", "time": "2023-08-11 21:18:36"}];
+
+			const chatContainer = document.getElementById("chat-container");
+
+			for (let i = 0; i < messages.length; i++) {
+				console.log(
+					`${i} % 2 == 0(${i % 2 == 0}) ? e_messages_data[${i / 2}](${
+						e_messages_data[i / 2]
+					}) : undefined`
+				);
+				populate(chatContainer)(
+					messages[i],
+					e_messages[i],
+					i === messages.length - 1
+						? e_messages_data[Math.ceil(i / 2)]
+						: i % 2 == 0
+						? e_messages_data[i / 2]
+						: undefined
+				);
+			}
+		</script>
+	</body>
+</html>

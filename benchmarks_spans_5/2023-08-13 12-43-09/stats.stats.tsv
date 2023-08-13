@@ -1,0 +1,9 @@
+	bits	cover size	capacity
+count	8	8	8
+mean	76	229	33
+std	8	19	1
+min	61	195	31
+25%	73	222	33
+50%	78	231	33
+75%	80	240	34
+max	87	258	35

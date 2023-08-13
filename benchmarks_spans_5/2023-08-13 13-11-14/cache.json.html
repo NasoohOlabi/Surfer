@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Chat Interface</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				margin: 0;
+				padding: 0;
+			}
+
+			.chat-container {
+				width: 100%;
+				margin: 0 auto;
+				padding: 20px;
+			}
+
+			.message {
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 10px;
+				max-width: 30vw;
+			}
+
+			.person {
+				font-weight: bold;
+			}
+			h1 {
+				text-align: center;
+			}
+			/* Table style */
+			chat-container table {
+				width: 100%;
+				border-collapse: collapse;
+				text-align: center;
+			}
+
+			/* Table row style */
+			chat-container tr {
+				background-color: #f2f2f2;
+			}
+
+			/* Key column style */
+			chat-container td:first-child {
+				font-weight: bold;
+			}
+
+			/* Value column style */
+			chat-container td:last-child {
+				color: blue;
+			}
+
+			.time {
+				font-size: 12px;
+				padding: 1.5rem;
+			}
+			.user-message > .time {
+				color: #444;
+			}
+			.other-message > .time {
+				color: #888888;
+			}
+			.text {
+				margin-top: 5px;
+			}
+			.row {
+				display: flex;
+				width: 100%;
+			}
+			.left-cell {
+				width: 50%;
+			}
+			.right-cell {
+				width: 50%;
+			}
+			.user-message {
+				background-color: #66c2ff;
+				color: #fff;
+			}
+			.flex {
+				display: flex;
+			}
+			.justify-content-center {
+				justify-content: center;
+				align-items: center;
+			}
+			.align-items-center {
+				align-items: center;
+			}
+			.flex-row {
+				display: flex;
+				flex-direction: row;
+			}
+			.flex-row-reverse {
+				display: flex;
+				flex-direction: row-reverse;
+			}
+			.other-message {
+				background-color: #f5f5f5;
+				color: #333;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="flex justify-content-center align-items-center">
+			<table border="1" class="dataframe">
+				<thead>
+					<tr style="text-align: right">
+						<th>Stegasus Engine Report</th>
+						<th>bits</th>
+						<th>cover size</th>
+						<th>capacity</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- <tr>
+						<td>count</td>
+						<td>11</td>
+						<td>11</td>
+						<td>11</td>
+					</tr> -->
+					<tr>
+						<td>mean</td>
+						<td>79</td>
+						<td>234</td>
+						<td>34</td>
+					</tr>
+					<tr>
+						<td>std</td>
+						<td>12</td>
+						<td>41</td>
+						<td>3</td>
+					</tr>
+					<tr>
+						<td>min</td>
+						<td>64</td>
+						<td>176</td>
+						<td>30</td>
+					</tr>
+					<!-- <tr>
+						<td>25%</td>
+						<td>69</td>
+						<td>206</td>
+						<td>33</td>
+					</tr>
+					<tr>
+						<td>50%</td>
+						<td>76</td>
+						<td>226</td>
+						<td>34</td>
+					</tr>
+					<tr>
+						<td>75%</td>
+						<td>87</td>
+						<td>270</td>
+						<td>35</td>
+					</tr> -->
+					<tr>
+						<td>max</td>
+						<td>99</td>
+						<td>292</td>
+						<td>38</td>
+					</tr>
+				</tbody>
+			</table>
+			<div>
+				<h1>75 Bytes sent</h1>
+				<h1>
+					Channel Bandwidth = 600 bits / 824 seconds ≈ 0.728 bps (bits per
+					second)
+				</h1>
+			</div>
+		</div>
+		<div class="chat-container" id="chat-container">
+			<div class="row">
+				<div class="left-cell">
+					<h1>Generated Cover Chat</h1>
+				</div>
+				<div class="right-cell">
+					<h1>Stegasus Stego Chat</h1>
+				</div>
+			</div>
+			<!-- Messages will be dynamically added here -->
+		</div>
+
+		<script>
+			const tb = (stats_data) => {
+				const t = document.createElement("table");
+				const tr = (k, v) => {
+					const tr_kv = document.createElement("tr");
+					const td_k = document.createElement("td");
+					const td_v = document.createElement("td");
+					td_k.innerText = k;
+					td_v.innerText = v;
+					tr_kv.appendChild(td_k);
+					tr_kv.appendChild(td_v);
+					return tr_kv;
+				};
+				Object.entries(stats_data).forEach(([k, v]) => {
+					t.appendChild(tr(k, v));
+				});
+				return t;
+			};
+			const populate =
+				(chatContainer) => (message, e_message, stats_data) => {
+					const md = (message, col_class, stats_data) => {
+						const messageDiv = document.createElement("div");
+						messageDiv.classList.add("message");
+
+						const personSpan = document.createElement("span");
+						personSpan.classList.add("person");
+						personSpan.textContent = message.person;
+
+						const timeSpan = document.createElement("span");
+						timeSpan.classList.add("time");
+						timeSpan.textContent = message.time;
+
+						const textDiv = document.createElement("div");
+						textDiv.classList.add("text");
+						textDiv.textContent = message.text;
+
+						messageDiv.appendChild(personSpan);
+						messageDiv.appendChild(timeSpan);
+						messageDiv.appendChild(textDiv);
+
+						const cell = document.createElement("div");
+						cell.classList.add(col_class);
+
+						if (message.person === "alice nice") {
+							messageDiv.classList.add("user-message");
+							cell.classList.add("flex-row-reverse");
+						} else {
+							messageDiv.classList.add("other-message");
+							cell.classList.add("flex-row");
+						}
+						cell.appendChild(messageDiv);
+
+						if (stats_data) {
+							cell.appendChild(tb(stats_data));
+						}
+						return cell;
+					};
+					const row = document.createElement("div");
+					row.classList.add("row");
+
+					row.appendChild(md(message, "left-cell"));
+					row.appendChild(md(e_message, "right-cell", stats_data));
+					chatContainer.appendChild(row);
+				};
+
+			let e_messages = [
+				{
+					person: "alice nice",
+					text: "Early neural connectons can be unexpecxtedly painful \ud83d\ude13\ud83d\ude13\ud83d\ude13. Your feral friend's early trust \ud83d\ude22\ud83d\ude22 growth is hesartwarming. Follw her journey to this point \ud83d\ude42\ud83d\ude42. Many stories of parience?",
+					time: "2023-08-13 12:56:41",
+				},
+				{
+					person: "bob wick",
+					text: "Indeed, early neural connections can bring unexpected challenges, but witnessing your feral friend's trust growth is truly heartwarming. Looking forward to following her journey to this point. Have you encountered stories of patience before? \ud83d\ude0a",
+					time: "2023-08-13 12:57:35",
+				},
+				{
+					person: "alice nice",
+					text: "Absolutely, the early hours odften unveil \ud83e\udd29\ud83e\udd29\ud83e\udd29 fascinating experiencves. Your feline companion's rapud evolution warms \ud83d\ude42\ud83d\ude42\ud83d\ude42 the heart. Eaer to follow her remarkable journey \ud83d\udc9f\ud83d\udc9f\ud83d\udc9f. Share other \ud83d\udc94\ud83d\udc94 ways of pwrsistence?",
+					time: "2023-08-13 12:57:49",
+				},
+				{
+					person: "bob wick",
+					text: "Certainly, the initial moments frequently reveal captivating insights \ud83c\udf1f\ud83c\udf1f\ud83c\udf1f. The rapid transformation of your feline companion is truly heartening \ud83d\ude0a\ud83d\ude0a\ud83d\ude0a. Eagerly anticipating the unfolding of her extraordinary odyssey \ud83c\udf37\ud83c\udf37\ud83c\udf37. Do divulge alternative methods of unwavering determination \ud83d\udcaa\ud83d\udcaa.",
+					time: "2023-08-13 12:58:32",
+				},
+				{
+					person: "alice nice",
+					text: "Absolutely, those cat encountrs \ud83e\udd23\ud83e\udd23 often possess hiden gems. Your cat's new evolutiuon warms the heart \ud83d\ude3b\ud83d\ude3b\ud83d\ude3b. Can't faiol to see \ud83d\ude3b\ud83d\ude3b\ud83d\ude3b her journey continue. Share other ways peoiple show unwavering \ud83d\udc95 determination?",
+					time: "2023-08-13 12:58:48",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the encounters with felines often hold delightful surprises \ud83d\ude38\ud83d\ude38. The unfolding evolution of your cat is undeniably heartening \u2764\ufe0f\u2764\ufe0f\u2764\ufe0f. It's impossible not to anticipate her ongoing journey with excitement \ud83d\ude3d\ud83d\ude3d\ud83d\ude3d. How about exploring various ways people exhibit steadfast determination? \ud83d\udcaa\ud83d\udcaa",
+					time: "2023-08-13 12:59:59",
+				},
+				{
+					person: "alice nice",
+					text: "INdeed, feline creatures yield \ud83d\ude3b charming revelations. Your grandmother's evokving trust warms the heart \ud83d\ude0a. Anticipoating her journey \ud83d\ude42\ud83d\ude42 ahead is tghrilling. Can you recall instnces of remarkable personal \u2764\u2764 determination?",
+					time: "2023-08-13 13:00:14",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the encounters with felines often hold delightful surprises \ud83d\ude38\ud83d\ude38. The unfolding evolution of your cat is undeniably heartening \u2764\ufe0f\u2764\ufe0f\u2764\ufe0f. It's impossible not to anticipate her ongoing journey with excitement \ud83d\ude3d\ud83d\ude3d\ud83d\ude3d. How about exploring various ways people exhibit steadfast determination? \ud83d\udcaa\ud83d\udcaa",
+					time: "2023-08-13 13:01:00",
+				},
+				{
+					person: "alice nice",
+					text: "Certainly, feline \ud83d\ude3b\ud83d\ude3b\ud83d\ude3b cats reveal unexpoected joys. Your child's groth is truly heartwarming. Esagerly monitoring her cobtinued \ud83d\udc96\ud83d\udc96\ud83d\udc96 progress is enthralling. Have you found remarkble \ud83d\udc98 human persistence in your own lives \ud83d\ude0a?",
+					time: "2023-08-13 13:01:14",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the enigmatic charm of feline companions never fails to bring unexpected delight \ud83d\ude38\ud83d\ude38\ud83d\ude38. Watching your child's growth is an unequivocally heartening experience \ud83c\udf31\ud83c\udf31\ud83c\udf31. The enthralling journey of her ongoing advancement is something to be eagerly cherished \ud83d\udc97\ud83d\udc97\ud83d\udc97. Speaking of remarkable human persistence, I've encountered inspiring instances of unwavering determination throughout various facets of life \ud83d\ude0a\ud83d\ude0a.",
+					time: "2023-08-13 13:02:29",
+				},
+				{
+					person: "alice nice",
+					text: "Indeed, felines weave capytivating stories. Nurturing \ud83d\udc9c a child's proghress is undeniably heartwarming \u2728\u2728\u2728. Cheridshing their future is a guift. Could you recall \ud83e\udd29\ud83e\udd29 some of those inspiring storioes you've come across?",
+					time: "2023-08-13 13:02:57",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the mystique of felines often crafts enthralling narratives \ud83d\udc3e\ud83d\udc3e. Guiding a child's development is unquestionably a source of heartwarming fulfillment \ud83c\udf1f\ud83c\udf1f\ud83c\udf1f. Embracing their potential is a precious blessing \ud83c\udf08\ud83c\udf08. I can certainly recount numerous captivating tales of determination and resilience that have crossed my path \ud83c\udf20\ud83c\udf20.",
+					time: "2023-08-13 13:04:07",
+				},
+				{
+					person: "alice nice",
+					text: "Certainly, feline voices evoke \ud83d\udd2e\ud83d\udd2e caprtivating tales. Nurturng \ud83d\ude0d\ud83d\ude0d\ud83d\ude0d a child's fantasies is profoundly rewarding. Embracing potenyial brings \u2728\u2728 fulfillment. Instead of detrmination, habe you navigated challenges where somethiung needed balancing? Sharing skills \ud83d\ude42\ud83d\ude42 might shed some blood \ud83d\ude15.",
+					time: "2023-08-13 13:04:21",
+				},
+				{
+					person: "bob wick",
+					text: "Indeed, the melodic narratives of feline companions weave enchanting stories \ud83c\udfb6\ud83c\udfb6. Cultivating a child's imagination is incredibly gratifying \ud83c\udf20\ud83c\udf20\ud83c\udf20. Embracing untapped potential is a journey to fulfillment \u2728\u2728. Amidst the ebb and flow, I've encountered situations where delicate equilibrium was essential \ud83c\udf0a\ud83c\udf0a. Sharing techniques can sometimes unveil complexities that require careful consideration \ud83e\udd14\ud83e\udd14.",
+					time: "2023-08-13 13:05:30",
+				},
+				{
+					person: "alice nice",
+					text: "Certanly, felines tell \ud83d\ude42 melodic tales. Nurtureing a student's creativity brings forth. Exploring potential is rewarfing. HAve you encountered \ud83d\udc98\ud83d\udc98\ud83d\udc98 instances where balancibg priorities requires finesse? Approaches \u2728\u2728 can offer unique insight into life's harmoinies \ud83c\udf89.",
+					time: "2023-08-13 13:05:45",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the stories woven by feline companions are often melodious and uplifting \ud83c\udfb6\ud83c\udfb6. Fostering a student's creativity yields abundant possibilities. Delving into uncharted potential is undeniably enriching. I've indeed faced instances where delicately juggling competing priorities demanded finesse \ud83c\udf1f\ud83c\udf1f. Diverse approaches \u2728\u2728 can illuminate the intricacies of life's harmonious interplay \ud83c\udf08\ud83c\udf08.",
+					time: "2023-08-13 13:07:07",
+				},
+				{
+					person: "alice nice",
+					text: "Definitely, feline tales create melodies. Cultivating student love opens doors. Exploring art enriches lives. Have you encountered scenarios demanding balanced response? Various strategies can unveil one's intricate symphony. How did you avoid such situations?",
+					time: "2023-08-13 13:07:21",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, feline narratives compose harmonious melodies. Nurturing a student's passion unlocks boundless opportunities. Immersing in artistic exploration enhances the tapestry of existence. Indeed, I've faced scenarios necessitating a poised approach. A multitude of strategies can unveil the intricacies of one's unique symphony. Evading such circumstances involves a blend of foresight and adaptability.",
+					time: "2023-08-13 13:08:42",
+				},
+				{
+					person: "alice nice",
+					text: "Indeed, feline voices resonate harmoniously. Nurturing student passions sparks new paths. Exploring art enriches life's fabric. Have you encountered anyone needing a poised instructor? Balancing strategies can orchestrate a symphony of emotions. How do you navigate complexity?",
+					time: "2023-08-13 13:08:57",
+				},
+				{
+					person: "alice nice",
+					text: "Absolutely, harmonious lives unfold. Nurturing passions sparks boundless journeys. Love enriches life's tapestry. Poised responses in music are like conducting symphonies. Adaptation and creative choices guide me. How about you?",
+					time: "2023-08-13 13:10:25",
+				},
+			];
+			let e_messages_data = [
+				{ bits: 67, "cover size": 176, capacity: "38%" },
+				{ bits: 71, "cover size": 189, capacity: "38%" },
+				{ bits: 67, "cover size": 205, capacity: "33%" },
+				{ bits: 75, "cover size": 211, capacity: "36%" },
+				{ bits: 76, "cover size": 226, capacity: "34%" },
+				{ bits: 64, "cover size": 208, capacity: "31%" },
+				{ bits: 87, "cover size": 286, capacity: "30%" },
+				{ bits: 87, "cover size": 259, capacity: "34%" },
+				{ bits: 94, "cover size": 282, capacity: "33%" },
+				{ bits: 99, "cover size": 292, capacity: "34%" },
+				{ bits: 81, "cover size": 239, capacity: "34%" },
+			];
+			let messages = [
+				{
+					person: "alice nice",
+					text: "Early morning connections can be unexpectedly special. Your feral friend's gradual trust growth is heartwarming. Imagine her journey to this point. Similar stories of patience?",
+					time: "2023-08-13 12:56:41",
+				},
+				{
+					person: "bob wick",
+					text: "Indeed, early neural connections can bring unexpected challenges, but witnessing your feral friend's trust growth is truly heartwarming. Looking forward to following her journey to this point. Have you encountered stories of patience before? \ud83d\ude0a",
+					time: "2023-08-13 12:57:35",
+				},
+				{
+					person: "alice nice",
+					text: "Absolutely, the dawn hours often unveil unique experiences. Your feline companion's trust evolution warms the heart. Eager to track her remarkable journey. Share other tales of persistence?",
+					time: "2023-08-13 12:57:49",
+				},
+				{
+					person: "bob wick",
+					text: "Certainly, the initial moments frequently reveal captivating insights \ud83c\udf1f\ud83c\udf1f\ud83c\udf1f. The rapid transformation of your feline companion is truly heartening \ud83d\ude0a\ud83d\ude0a\ud83d\ude0a. Eagerly anticipating the unfolding of her extraordinary odyssey \ud83c\udf37\ud83c\udf37\ud83c\udf37. Do divulge alternative methods of unwavering determination \ud83d\udcaa\ud83d\udcaa.",
+					time: "2023-08-13 12:58:32",
+				},
+				{
+					person: "alice nice",
+					text: "Absolutely, those first encounters often hold hidden gems \ud83c\udf1f. Your cat's swift evolution warms the heart \ud83d\ude0a. Can't wait to see her journey continue \ud83c\udf37. Share other ways people show unwavering determination? \ud83d\udcaa",
+					time: "2023-08-13 12:58:48",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the encounters with felines often hold delightful surprises \ud83d\ude38\ud83d\ude38. The unfolding evolution of your cat is undeniably heartening \u2764\ufe0f\u2764\ufe0f\u2764\ufe0f. It's impossible not to anticipate her ongoing journey with excitement \ud83d\ude3d\ud83d\ude3d\ud83d\ude3d. How about exploring various ways people exhibit steadfast determination? \ud83d\udcaa\ud83d\udcaa",
+					time: "2023-08-13 12:59:59",
+				},
+				{
+					person: "alice nice",
+					text: "Indeed, feline interactions yield charming revelations \ud83d\udc31. Your cat's evolving trust warms the heart \u2764\ufe0f. Anticipating her journey ahead is thrilling \ud83c\udf1f. Can you share instances of remarkable human determination? \ud83d\udcaa",
+					time: "2023-08-13 13:00:14",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the encounters with felines often hold delightful surprises \ud83d\ude38\ud83d\ude38. The unfolding evolution of your cat is undeniably heartening \u2764\ufe0f\u2764\ufe0f\u2764\ufe0f. It's impossible not to anticipate her ongoing journey with excitement \ud83d\ude3d\ud83d\ude3d\ud83d\ude3d. How about exploring various ways people exhibit steadfast determination? \ud83d\udcaa\ud83d\udcaa",
+					time: "2023-08-13 13:01:00",
+				},
+				{
+					person: "alice nice",
+					text: "Certainly, feline bonds reveal unexpected joys \ud83d\ude3a. Your cat's growth is truly heartwarming \u2764\ufe0f. Eagerly awaiting her continued progress is enthralling \ud83d\ude3b. Have you witnessed remarkable human persistence in your own experiences? \ud83d\udcaa",
+					time: "2023-08-13 13:01:14",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the enigmatic charm of feline companions never fails to bring unexpected delight \ud83d\ude38\ud83d\ude38\ud83d\ude38. Watching your child's growth is an unequivocally heartening experience \ud83c\udf31\ud83c\udf31\ud83c\udf31. The enthralling journey of her ongoing advancement is something to be eagerly cherished \ud83d\udc97\ud83d\udc97\ud83d\udc97. Speaking of remarkable human persistence, I've encountered inspiring instances of unwavering determination throughout various facets of life \ud83d\ude0a\ud83d\ude0a.",
+					time: "2023-08-13 13:02:29",
+				},
+				{
+					person: "alice nice",
+					text: "Indeed, felines weave captivating spells \ud83d\udc31. Nurturing a child's progress is undeniably heartwarming \ud83c\udf31. Cherishing their journey is a gift \ud83d\udc97. Could you share some of those inspiring stories you've come across?",
+					time: "2023-08-13 13:02:57",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the mystique of felines often crafts enthralling narratives \ud83d\udc3e\ud83d\udc3e. Guiding a child's development is unquestionably a source of heartwarming fulfillment \ud83c\udf1f\ud83c\udf1f\ud83c\udf1f. Embracing their potential is a precious blessing \ud83c\udf08\ud83c\udf08. I can certainly recount numerous captivating tales of determination and resilience that have crossed my path \ud83c\udf20\ud83c\udf20.",
+					time: "2023-08-13 13:04:07",
+				},
+				{
+					person: "alice nice",
+					text: "Certainly, feline companions evoke captivating tales \ud83d\udc31. Nurturing a child's growth is profoundly rewarding \ud83c\udf31. Embracing potential brings fulfillment \ud83c\udf08. Speaking of determination, have you navigated challenges where priorities needed balancing? Sharing experiences might shed some light.",
+					time: "2023-08-13 13:04:21",
+				},
+				{
+					person: "bob wick",
+					text: "Indeed, the melodic narratives of feline companions weave enchanting stories \ud83c\udfb6\ud83c\udfb6. Cultivating a child's imagination is incredibly gratifying \ud83c\udf20\ud83c\udf20\ud83c\udf20. Embracing untapped potential is a journey to fulfillment \u2728\u2728. Amidst the ebb and flow, I've encountered situations where delicate equilibrium was essential \ud83c\udf0a\ud83c\udf0a. Sharing techniques can sometimes unveil complexities that require careful consideration \ud83e\udd14\ud83e\udd14.",
+					time: "2023-08-13 13:05:30",
+				},
+				{
+					person: "alice nice",
+					text: "Certainly, felines spark melodic tales \ud83d\udc31. Nurturing a child's creativity brings joy \ud83c\udfa8. Exploring potential is rewarding \u2728. Have you encountered situations where balancing priorities required finesse? Approaches can offer unique insights into life's harmonies.",
+					time: "2023-08-13 13:05:45",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, the stories woven by feline companions are often melodious and uplifting \ud83c\udfb6\ud83c\udfb6. Fostering a student's creativity yields abundant possibilities. Delving into uncharted potential is undeniably enriching. I've indeed faced instances where delicately juggling competing priorities demanded finesse \ud83c\udf1f\ud83c\udf1f. Diverse approaches \u2728\u2728 can illuminate the intricacies of life's harmonious interplay \ud83c\udf08\ud83c\udf08.",
+					time: "2023-08-13 13:07:07",
+				},
+				{
+					person: "alice nice",
+					text: "Definitely, feline tales hold melodies \ud83d\udc3e. Cultivating student creativity opens doors \ud83d\udcda. Exploring potential enriches lives \u2728. Have you encountered scenarios demanding balanced priorities? Various strategies can unveil life's intricate symphony. How did you navigate such situations?",
+					time: "2023-08-13 13:07:21",
+				},
+				{
+					person: "bob wick",
+					text: "Absolutely, feline narratives compose harmonious melodies. Nurturing a student's passion unlocks boundless opportunities. Immersing in artistic exploration enhances the tapestry of existence. Indeed, I've faced scenarios necessitating a poised approach. A multitude of strategies can unveil the intricacies of one's unique symphony. Evading such circumstances involves a blend of foresight and adaptability.",
+					time: "2023-08-13 13:08:42",
+				},
+				{
+					person: "alice nice",
+					text: "Indeed, feline tales resonate harmoniously \ud83c\udfb5. Nurturing student passions sparks infinite paths \ud83c\udf20. Exploring art enriches life's fabric \ud83c\udfa8. Have you encountered situations needing a poised response? Balancing strategies can orchestrate a symphony of resolutions. How do you navigate complexity?",
+					time: "2023-08-13 13:08:57",
+				},
+				{
+					person: "alice nice",
+					text: "Absolutely, harmonious tales unfold \ud83c\udfb6. Nurturing passions sparks boundless journeys \ud83c\udf1f. Art enriches life's tapestry \ud83c\udfa8. Poised responses in challenges are like conducting symphonies \ud83c\udfbb. Adaptation and careful choices guide me. How about you?",
+					time: "2023-08-13 13:10:25",
+				},
+			];
+
+			const chatContainer = document.getElementById("chat-container");
+
+			for (let i = 0; i < messages.length; i++) {
+				console.log(
+					`${i} % 2 == 0(${i % 2 == 0}) ? e_messages_data[${i / 2}](${
+						e_messages_data[i / 2]
+					}) : undefined`
+				);
+				populate(chatContainer)(
+					messages[i],
+					e_messages[i],
+					i === messages.length - 1
+						? e_messages_data[Math.ceil(i / 2)]
+						: i % 2 == 0
+						? e_messages_data[i / 2]
+						: undefined
+				);
+			}
+		</script>
+	</body>
+</html>

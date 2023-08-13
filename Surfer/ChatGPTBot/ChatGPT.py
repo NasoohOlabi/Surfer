@@ -4,6 +4,7 @@ from tkinter import messagebox
 from typing import Tuple
 
 import selenium.webdriver as webdriver
+from regex import P
 # from Feed import Feed
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -95,7 +96,10 @@ class ChatGPT:
 				EC.presence_of_element_located((By.CSS_SELECTOR, f'[d="{svg_path}"]'))
 			)
 		time.sleep(5)
-		if self.name is None: # first ChatGPT instance ever or new is pressed and we are already at new
+		if self.run_script('chat.openai.get last answer')() is None:
+			self.driver.refresh()
+			return self._ask(prompt,newChat)
+		elif self.name is None: # first ChatGPT instance ever or new is pressed and we are already at new
 			self.name = self.run_script('chat.openai.get current chat name')()
 			return self.run_script('chat.openai.get last answer')(), self
 		elif newChat:
